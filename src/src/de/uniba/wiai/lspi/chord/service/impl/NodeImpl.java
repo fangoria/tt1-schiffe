@@ -433,16 +433,18 @@ public final class NodeImpl extends Node {
 
 	// TODO: implement this function in TTP
 	@Override
-	public final void broadcast(Broadcast info) throws CommunicationException {
-		if (this.logger.isEnabledFor(DEBUG)) {
-			this.logger.debug(" Send broadcast message");
-		}
+	public void broadcast(Broadcast info) throws CommunicationException {
+		// TODO Workpackage 1
 
-		// finally inform application
-		if (this.notifyCallback != null) {
-			this.notifyCallback.broadcast(info.getSource(), info.getTarget(),
-					info.getHit());
-		}
+		// if (this.logger.isEnabledFor(DEBUG)) {
+		// this.logger.debug(" Send broadcast message");
+		// }
+		//
+		// // finally inform application
+		// if (this.notifyCallback != null) {
+		// this.notifyCallback.broadcast(info.getSource(), info.getTarget(),
+		// info.getHit());
+		// }
 	}
 
 }
