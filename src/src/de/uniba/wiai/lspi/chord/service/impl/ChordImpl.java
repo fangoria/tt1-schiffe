@@ -31,6 +31,7 @@ import static de.uniba.wiai.lspi.util.logging.Logger.LogLevel.DEBUG;
 import static de.uniba.wiai.lspi.util.logging.Logger.LogLevel.INFO;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -698,6 +699,50 @@ public final class ChordImpl implements Chord, Report, AsynChord {
 
 	}
 
+	public final void insert(ID id, Serializable s) {
+
+		// check parameters
+		if (id == null || s == null) {
+			throw new NullPointerException(
+					"Neither parameter may have value null!");
+		}
+
+		Entry entryToInsert = new Entry(id, s);
+
+		boolean debug = this.logger.isEnabledFor(DEBUG);
+		if (debug) {
+			this.logger.debug("Inserting new entry with id " + id);
+		}
+		boolean inserted = false;
+		while (!inserted) {
+			// find successor of id
+			Node responsibleNode;
+			// try {
+			responsibleNode = this.findSuccessor(id);
+
+			if (debug) {
+				this.logger.debug("Invoking insertEntry method on node "
+						+ responsibleNode.getNodeID());
+			}
+
+			// invoke insertEntry method
+			try {
+				responsibleNode.insertEntry(entryToInsert);
+				inserted = true;
+			} catch (CommunicationException e1) {
+				if (debug) {
+					this.logger
+							.debug(
+									"An error occured while invoking the insertEntry method "
+											+ " on the appropriate node! Insert operation "
+											+ "failed!", e1);
+				}
+				continue;
+			}
+		}
+		this.logger.debug("New entry was inserted!");
+	}
+	
 	public final void insert(Key key, Serializable s) {
 
 		// check parameters
@@ -708,6 +753,11 @@ public final class ChordImpl implements Chord, Report, AsynChord {
 
 		// determine ID for key
 		ID id = this.hashFunction.getHashKey(key);
+		// TODO RAUSNEHMEN!!!!
+		byte[] bla = new byte[160];
+		Arrays.fill(bla, Byte.MIN_VALUE);
+		bla[2] = Byte.MAX_VALUE;
+		id = new ID(bla);
 		Entry entryToInsert = new Entry(id, s);
 
 		boolean debug = this.logger.isEnabledFor(DEBUG);

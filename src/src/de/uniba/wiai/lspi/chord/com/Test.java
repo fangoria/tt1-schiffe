@@ -230,9 +230,9 @@ public class Test {
 		public Set<Entry> retrieveEntries(ID id) throws CommunicationException {
 			return new HashSet<Entry>();
 		}
-		
-		public void broadcast (Broadcast info) throws CommunicationException {
-			
+
+		public void broadcast(Broadcast info) throws CommunicationException {
+
 		}
 
 	}

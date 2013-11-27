@@ -29,6 +29,7 @@ package de.uniba.wiai.lspi.chord.com.rmi;
 import java.rmi.AccessException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
+import java.rmi.Remote;
 //import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -61,6 +62,7 @@ public final class RMIEndpoint extends Endpoint implements RemoteNode {
 
 	/**
 	 * Can only be called if Endpoint is not in state STARTED!
+	 * 
 	 * @return
 	 */
 	RemoteNode getRemoteNode() {
@@ -93,7 +95,7 @@ public final class RMIEndpoint extends Endpoint implements RemoteNode {
 			if (registry == null) {
 				registry = LocateRegistry.createRegistry(this.url.getPort());
 			}
-			//Remote remoteRef;
+			// Remote remoteRef;
 			remoteNode = (RemoteNode) UnicastRemoteObject.exportObject(this);
 			registry.bind(NAME_IN_REGISTRY + this.url.toString(), remoteNode);
 			this.setState(LISTENING);
@@ -109,8 +111,8 @@ public final class RMIEndpoint extends Endpoint implements RemoteNode {
 			return new RemoteNodeInfo(remoteNode, this.node.getNodeID(),
 					this.node.getNodeURL());
 		} else {
-			return new RemoteNodeInfo(((RMIProxy) node).getRemoteNode(), node
-					.getNodeID(), node.getNodeURL());
+			return new RemoteNodeInfo(((RMIProxy) node).getRemoteNode(),
+					node.getNodeID(), node.getNodeURL());
 		}
 	}
 
@@ -187,9 +189,9 @@ public final class RMIEndpoint extends Endpoint implements RemoteNode {
 			CommunicationException {
 		return this.node.retrieveEntries(id);
 	}
-	
+
 	public void broadcast(Broadcast info) throws RemoteException,
-	CommunicationException {
+			CommunicationException {
 		this.node.broadcast(info);
 	}
 }

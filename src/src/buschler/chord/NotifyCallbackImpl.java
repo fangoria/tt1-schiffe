@@ -8,13 +8,13 @@ public class NotifyCallbackImpl implements
 	@Override
 	public void broadcast(ID source, ID target, Boolean hit) {
 		// TODO Auto-generated method stub
-
+		System.out.println("broadcast");
 	}
 
 	@Override
 	public void retrieved(ID target) {
 		// TODO Auto-generated method stub
-
+		System.out.println("retrieve: " + target);
 	}
 
 }
