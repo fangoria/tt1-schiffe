@@ -863,7 +863,7 @@ public final class ChordImpl implements Chord, Report, AsynChord {
 		}
 
 		// determine ID for key
-		// ID id = this.hashFunction.getHashKey(key);
+//		 ID id = this.hashFunction.getHashKey(key);
 
 		boolean debug = this.logger.isEnabledFor(DEBUG);
 		if (debug) {

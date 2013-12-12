@@ -2,10 +2,10 @@ package buschler.chord;
 
 import java.net.MalformedURLException;
 import java.util.Arrays;
+import java.util.Scanner;
 
 import de.uniba.wiai.lspi.chord.data.ID;
 import de.uniba.wiai.lspi.chord.data.URL;
-import de.uniba.wiai.lspi.chord.service.Key;
 import de.uniba.wiai.lspi.chord.service.NotifyCallback;
 import de.uniba.wiai.lspi.chord.service.PropertiesLoader;
 import de.uniba.wiai.lspi.chord.service.ServiceException;
@@ -22,7 +22,8 @@ public class Main {
 		ChordImpl chordA;
 
 		NotifyCallback nc = new NotifyCallbackImpl();
-		byte[] A = new byte[160];
+		byte[] A = new byte[20];
+		byte[] Z = new byte[20];
 
 		Arrays.fill(A, Byte.MAX_VALUE);
 		
@@ -43,38 +44,51 @@ public class Main {
 			throw new RuntimeException(" Could not create DHT ! ", e);
 		}
 
-		byte[] bla = new byte[160];
+		byte[] bla = new byte[20];
 		Arrays.fill(bla, Byte.MIN_VALUE);
-		bla[22] = Byte.MAX_VALUE;
+		bla[19] = Byte.MAX_VALUE;
 		ID id = new ID(bla);
 
-		ChordImpl ci = null;
-		for (int i = 0; i < 20; i++) {
+		ChordImpl[] ci = new ChordImpl[20];
+		for (int i = 1; i < 20; i++) {
 			System.out.print(i + " ");
-			byte[] Z = new byte[160];
 			Arrays.fill(Z, Byte.MIN_VALUE);
 			Z[i] = Byte.MAX_VALUE;
-			ci = addChord(new ID(Z), (i + 8081));
+			ci[i] = addChord(new ID(Z), (i + 8081));
+
 			if (i == 10) {
-				ci.insert(id, "Tomate");
+				ci[i].insert(id, "Tomate");
 			}
 		}
-
-		System.out.println(chordA.getPredecessorID());
-		System.out.println(chordA.getFingerTable());
+		
+		System.out.println();
+		
+//		System.out.println(chordA.getPredecessorID());
+		System.out.println(chordA.getFingerTable().size());
 		System.out.println(chordA.retrieve(id));
-		System.out.println(ci.getFingerTable());
-		System.out.println(ci.retrieve(id));
+		System.out.println(chordA.getFingerTable());
+//		System.out.println(ci.retrieve(id));
 
 		
 		
-		// chordA.broadcast(new ID(B), true);
-		// System.out.println("Broadcast 1");
-		// chordB.broadcast(new ID(A), true);
-		// System.out.println("Broadcast 2");
-		// chordC.broadcast(new ID(A), true);
-		// System.out.println("Broadcast 3");
-		//
+//		 chordA.broadcast(new ID(Z), true);
+//		 System.out.println("Broadcast 1");
+//		 ci[10].broadcast(new ID(A), true);
+//		 System.out.println("Broadcast 2");
+//		 ci[12].broadcast(new ID(A), true);
+//		 System.out.println("Broadcast 3");
+		 
+		
+		Scanner scan = new Scanner(System.in);
+		while (true) {
+			
+			if (scan.hasNext()) {
+				scan.next();
+				for (int i = 1; i < ci.length; i++) {
+					System.out.print(ci[i].getFingerTable().size() + " ");
+				}				
+			}		
+		}
 	}
 	
 	public static ChordImpl addChord(ID id, int port) {
