@@ -30,6 +30,7 @@ package de.uniba.wiai.lspi.chord.service.impl;
 import static de.uniba.wiai.lspi.util.logging.Logger.LogLevel.DEBUG;
 import static de.uniba.wiai.lspi.util.logging.Logger.LogLevel.INFO;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -435,7 +436,18 @@ public final class NodeImpl extends Node {
 	@Override
 	public void broadcast(Broadcast info) throws CommunicationException {
 		// TODO Workpackage 1
-
+		System.out.println(info);
+		
+		Node[] nodes = impl.getFingerTable().toArray(new Node[impl.getFingerTable().size()]);
+		Arrays.sort(nodes);
+		
+		for (int i = 1; i < nodes.length; i++) {
+			if (nodes[i].getNodeID().compareTo(info.getRange()) < 0) {
+				info = new Broadcast(nodes[i].getNodeID(), info.getSource(), info.getTarget(), info.getTransaction(), info.getHit());
+				nodes[i - 1].broadcast(info);
+			}
+		}
+		
 		// if (this.logger.isEnabledFor(DEBUG)) {
 		// this.logger.debug(" Send broadcast message");
 		// }

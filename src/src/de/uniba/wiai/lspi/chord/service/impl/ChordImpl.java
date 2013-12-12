@@ -42,6 +42,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import de.uniba.wiai.lspi.chord.com.Broadcast;
 import de.uniba.wiai.lspi.chord.com.CommunicationException;
 import de.uniba.wiai.lspi.chord.com.Entry;
 import de.uniba.wiai.lspi.chord.com.Node;
@@ -1166,9 +1167,32 @@ public final class ChordImpl implements Chord, Report, AsynChord {
 	public void broadcast(ID target, Boolean hit) {
 		// TODO Workpackage 1
 		// this.logger.debug("App called broadcast");
+		Node[] ni = this.getFingerTable().toArray(new Node[this.getFingerTable().size()]);
+		
+		
+		Arrays.sort(ni);
+	
+		for (int i = 1; i < ni.length; i++) {
+			try {
+			Broadcast b = new Broadcast(ni[i].getNodeID(), getID(), getID(), 12345676, true);
+			ni[i - 1].broadcast(b);
+			} catch (CommunicationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			};
+		}
 
+		
+		Broadcast last = new Broadcast(getPredecessorID(), getID(), getID(), 12345676, true);
+		try {
+			ni[ni.length - 1].broadcast(last);
+		} catch (CommunicationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
-
+	
 	public void setCallback(NotifyCallback callback) {
 		if (callback == null) {
 			NullPointerException e = new NullPointerException(
