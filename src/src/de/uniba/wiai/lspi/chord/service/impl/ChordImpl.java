@@ -42,6 +42,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import buschler.chord.FingerTableSort;
 import de.uniba.wiai.lspi.chord.com.Broadcast;
 import de.uniba.wiai.lspi.chord.com.CommunicationException;
 import de.uniba.wiai.lspi.chord.com.Entry;
@@ -1165,30 +1166,28 @@ public final class ChordImpl implements Chord, Report, AsynChord {
 	// send broadcast to all nodes in finger table
 	@Override
 	public void broadcast(ID target, Boolean hit) {
-		// TODO Workpackage 1
-		// this.logger.debug("App called broadcast");
-		Node[] ni = this.getFingerTable().toArray(new Node[this.getFingerTable().size()]);
+		Broadcast info; 
+		int transactionID = (int) (Math.random()* 13370815);
+		
+		System.out.println("Start");
+		
+		Node[] fingerTable = this.getFingerTable().toArray(new Node[this.getFingerTable().size()]);		
+//		Arrays.sort(fingerTable);
+		fingerTable = FingerTableSort.sort(fingerTable, getID());
 		
 		
-		Arrays.sort(ni);
-	
-		for (int i = 1; i < ni.length; i++) {
+		for (int i = 0; i < fingerTable.length; i++) {
+			if (i == fingerTable.length - 1) {
+				info = new Broadcast(getID(), getID(), target, transactionID, hit);
+			} else {
+				info = new Broadcast(fingerTable[i + 1].getNodeID(), getID(), target, transactionID, hit);
+			}
+			
 			try {
-			Broadcast b = new Broadcast(ni[i].getNodeID(), getID(), getID(), 12345676, true);
-			ni[i - 1].broadcast(b);
+				fingerTable[i].broadcast(info);
 			} catch (CommunicationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			};
-		}
-
-		
-		Broadcast last = new Broadcast(getPredecessorID(), getID(), getID(), 12345676, true);
-		try {
-			ni[ni.length - 1].broadcast(last);
-		} catch (CommunicationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+				System.err.println("FAIL!");
+			}
 		}
 		
 	}

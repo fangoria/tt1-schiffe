@@ -15,25 +15,21 @@ import de.uniba.wiai.lspi.chord.service.impl.ChordImpl;
 public class Main {
 
 	static final String URL1 = "ocsocket://localhost:4245/";
-	private static final int NODECOUNT = 10;
+	private static final int NODECOUNT = 5;
 
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) {		
 		PropertiesLoader.loadPropertyFile();
-		byte[] Z = new byte[20];
-		Arrays.fill(Z, Byte.MIN_VALUE);
+		byte[] z = new byte[20];
 
 		ChordImpl[] ci = new ChordImpl[NODECOUNT];
-		ci[0] = addChord(new ID(Z), (7081));
-		System.out.print(0 + " ");
-		System.out.println(new ID(Z));
-		for (int i = 1; i < NODECOUNT; i++) {
-			new Random().nextBytes(Z);
-			ci[i] = addChord(new ID(Z), (i + 7081));
+		for (int i = 0; i < NODECOUNT; i++) {
+			new Random().nextBytes(z);
+			ci[i] = addChord(new ID(z), (i + 7081));
 			System.out.print(i + " ");
-			System.out.println(new ID(Z));
+			System.out.println(new ID(z));
 		}
 		
 		System.out.println();
@@ -49,7 +45,16 @@ public class Main {
 						y += ci[i].getFingerTable().size();
 					}									
 					System.out.print(y);
+				} else if (s.equals("a")) {
+						int b = Integer.parseInt(scan.next());
+						if (b < ci.length && b >= 0) {
+//							Node[] fingerTable = FingerTableSort.sort(fingerTable, getID());
+							for (int i = 0; i < ci[b].getFingerTable().size(); i++) {
+								System.out.println(ci[b].getFingerTable().get(i).getNodeID());
+							}							
+						}
 				} else if (s.equals("b")) {
+				
 					int b = Integer.parseInt(scan.next());
 					ci[b].broadcast(ci[b].getID(), false);
 				} else {
