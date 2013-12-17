@@ -1175,6 +1175,9 @@ public final class ChordImpl implements Chord, Report, AsynChord {
 //		Arrays.sort(fingerTable);
 		fingerTable = FingerTableSort.sort(fingerTable, getID());
 		
+		for (int i = 0; i < fingerTable.length; i++) {
+			System.out.println(fingerTable[i].getNodeID());			
+		}
 		
 		for (int i = 0; i < fingerTable.length; i++) {
 			if (i == fingerTable.length - 1) {
@@ -1186,7 +1189,7 @@ public final class ChordImpl implements Chord, Report, AsynChord {
 			try {
 				fingerTable[i].broadcast(info);
 			} catch (CommunicationException e) {
-				System.err.println("FAIL!");
+				System.err.println("FAIL!\n\n" + e);
 			}
 		}
 		
