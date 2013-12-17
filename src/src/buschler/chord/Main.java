@@ -27,7 +27,7 @@ public class Main {
 		ChordImpl[] ci = new ChordImpl[NODECOUNT];
 		for (int i = 1; i < NODECOUNT; i++) {
 			new Random().nextBytes(z);
-			z[0] = (byte)(i * 10);
+//			z[0] = (byte)(i * 10);
 			ci[i] = addChord(new ID(z), (i + 7080), (i - 1 + 7080));
 			System.out.println(new ID(z));
 		}

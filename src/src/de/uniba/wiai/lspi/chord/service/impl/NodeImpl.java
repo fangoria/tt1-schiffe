@@ -436,14 +436,72 @@ public final class NodeImpl extends Node {
 	// TODO: implement this function in TTP
 	@Override
 	public void broadcast(Broadcast info) throws CommunicationException {		
-		
 		BigInteger zero = info.getSource().toBigInteger();
-		
+		BigInteger myID = getNodeID().toBigInteger().subtract(zero);
+		BigInteger range = info.getRange().toBigInteger().subtract(zero);
+		BigInteger nodeID;
+		BigInteger nextNodeID;
+		Broadcast nodeInfo;
+		ID rangeInfo;
 		Node[] fingerTable = impl.getFingerTable().toArray(new Node[impl.getFingerTable().size()]);
+		
+		System.out.println(zero + " - " + myID + "[" + getNodeID() + "] - " + range + "[" + info.getRange() + "]");
+		
 		fingerTable = FingerTableSort.sort(fingerTable, getNodeID());
 		
 		for (int i = 0; i < fingerTable.length; i++) {
-			System.out.println("  " + fingerTable[i].getNodeID().toBigInteger() + "\n- " + zero + "\n= " + fingerTable[i].getNodeID().toBigInteger().subtract(zero) + "\n");
+			nodeID = fingerTable[i].getNodeID().toBigInteger();
+			nodeID = nodeID.subtract(zero);
+			
+			if (i < fingerTable.length - 1) {
+				nextNodeID = fingerTable[i + 1].getNodeID().toBigInteger();
+				nextNodeID = nextNodeID.subtract(zero);
+				
+				if (myID.compareTo(nodeID) <= 0) {
+					if (nextNodeID.compareTo(range) == 1) {
+						nextNodeID = range;
+					}
+				}				
+			} else {
+				nextNodeID = range;
+			}
+			
+			nodeInfo = new Broadcast(new ID(nextNodeID.add(zero).toByteArray()), info.getSource(), info.getTarget(), info.getTransaction(), info.getHit());
+
+			if (nextNodeID.subtract(zero).compareTo(BigInteger.ZERO) == 0) {
+				// stop
+				break;
+			}
+			
+			fingerTable[i].broadcast(nodeInfo);
+			
+			
+			
+			
+//			nodeInfo = new Broadcast(rangeInfo, info.getSource(), info.getTarget(), info.getTransaction(), info.getHit());
+			
+//			if (i == fingerTable.length - 1) {
+//				rangeInfo = info.getRange();
+//			} else {
+//				rangeInfo = fingerTable[i + 1].getNodeID();
+//			}
+//
+//			if (maxRange.compareTo(BigInteger.ZERO) == 0) {
+//				System.out.println("ENDE");
+//			}
+//			
+//			range = rangeInfo.toBigInteger().subtract(zero);
+//			
+//			if (range.compareTo(BigInteger.ZERO) == 0) {
+//				System.out.println("range = 0");
+//				break;
+//			}
+			
+			
+//			System.out.println("  " + nodeID + "\n- " + zero + "\n= " + nodeID.subtract(zero) + "\n");
+			
+			
+			
 		}
 		
 		

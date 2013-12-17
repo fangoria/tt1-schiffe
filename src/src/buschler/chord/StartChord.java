@@ -22,7 +22,7 @@ public class StartChord {
 		byte[] a = new byte[20];
 
 		new Random().nextBytes(a);
-		a[0] = 0;
+//		a[0] = 0;
 		
 		PropertiesLoader.loadPropertyFile();
 		String protocol = URL.KNOWN_PROTOCOLS.get(URL.SOCKET_PROTOCOL);
