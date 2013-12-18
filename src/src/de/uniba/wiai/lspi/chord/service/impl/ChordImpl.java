@@ -1172,7 +1172,6 @@ public final class ChordImpl implements Chord, Report, AsynChord {
 		System.out.println("Start");
 		
 		Node[] fingerTable = this.getFingerTable().toArray(new Node[this.getFingerTable().size()]);		
-//		Arrays.sort(fingerTable);
 		fingerTable = FingerTableSort.sort(fingerTable, getID());
 		
 		for (int i = 0; i < fingerTable.length; i++) {
@@ -1189,7 +1188,7 @@ public final class ChordImpl implements Chord, Report, AsynChord {
 			try {
 				fingerTable[i].broadcast(info);
 			} catch (CommunicationException e) {
-				System.err.println("FAIL!\n\n" + e);
+				System.err.println("\n\nFAIL!\n\n" + e);
 			}
 		}
 		

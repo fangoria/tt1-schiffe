@@ -31,6 +31,7 @@ import static de.uniba.wiai.lspi.util.logging.Logger.LogLevel.DEBUG;
 import static de.uniba.wiai.lspi.util.logging.Logger.LogLevel.INFO;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -436,215 +437,55 @@ public final class NodeImpl extends Node {
 	// TODO: implement this function in TTP
 	@Override
 	public void broadcast(Broadcast info) throws CommunicationException {		
-		BigInteger zero = info.getSource().toBigInteger();
-		BigInteger myID = getNodeID().toBigInteger().subtract(zero);
-		BigInteger range = info.getRange().toBigInteger().subtract(zero);
-		BigInteger nodeID;
-		BigInteger nextNodeID;
-		Broadcast nodeInfo;
-		ID rangeInfo;
+	
+		System.out.println("Got Broadcast: " + getNodeID());
+		System.out.println(info);
+		System.out.println();
+		
+		ID distRangeID;
+		ID distFingerID;
+		ID distNextFingerID;
 		Node[] fingerTable = impl.getFingerTable().toArray(new Node[impl.getFingerTable().size()]);
-		
-		System.out.println(zero + " - " + myID + "[" + getNodeID() + "] - " + range + "[" + info.getRange() + "]");
-		
 		fingerTable = FingerTableSort.sort(fingerTable, getNodeID());
+		distRangeID = getDistance(info.getRange());
 		
 		for (int i = 0; i < fingerTable.length; i++) {
-			nodeID = fingerTable[i].getNodeID().toBigInteger();
-			nodeID = nodeID.subtract(zero);
-			
-			if (i < fingerTable.length - 1) {
-				nextNodeID = fingerTable[i + 1].getNodeID().toBigInteger();
-				nextNodeID = nextNodeID.subtract(zero);
-				
-				if (myID.compareTo(nodeID) <= 0) {
-					if (nextNodeID.compareTo(range) == 1) {
-						nextNodeID = range;
-					}
-				}				
+			distFingerID = getDistance(fingerTable[i].getNodeID());
+		
+			if (i == fingerTable.length - 1) {
+				if (distFingerID.compareTo(distRangeID) == -1) {
+					fingerTable[i].broadcast(info);
+				}
 			} else {
-				nextNodeID = range;
-			}
-			
-			nodeInfo = new Broadcast(new ID(nextNodeID.add(zero).toByteArray()), info.getSource(), info.getTarget(), info.getTransaction(), info.getHit());
-
-			if (nextNodeID.subtract(zero).compareTo(BigInteger.ZERO) == 0) {
-				// stop
-				break;
-			}
-			
-			fingerTable[i].broadcast(nodeInfo);
-			
-			
-			
-			
-//			nodeInfo = new Broadcast(rangeInfo, info.getSource(), info.getTarget(), info.getTransaction(), info.getHit());
-			
-//			if (i == fingerTable.length - 1) {
-//				rangeInfo = info.getRange();
-//			} else {
-//				rangeInfo = fingerTable[i + 1].getNodeID();
-//			}
-//
-//			if (maxRange.compareTo(BigInteger.ZERO) == 0) {
-//				System.out.println("ENDE");
-//			}
-//			
-//			range = rangeInfo.toBigInteger().subtract(zero);
-//			
-//			if (range.compareTo(BigInteger.ZERO) == 0) {
-//				System.out.println("range = 0");
-//				break;
-//			}
-			
-			
-//			System.out.println("  " + nodeID + "\n- " + zero + "\n= " + nodeID.subtract(zero) + "\n");
-			
-			
-			
-		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-/**************************************************************************************************************/		
-		
-		
-		
-//		System.err.println(getNodeID() + " got the Broadcast!");
-//		boolean first = false;
-//		boolean second = false;
-//		boolean third = false;
-//		boolean fourth = false;
-//		boolean fifth = false;
-//		boolean sixth = false;
-//		Broadcast nodeInfo;
-//		Node[] fingerTable = impl.getFingerTable().toArray(new Node[impl.getFingerTable().size()]);
-//		fingerTable = FingerTableSort.sort(fingerTable, getNodeID());
-//		
-//		if (fingerTable.length > 0) {
-//			
-//			for (int i = 0; i < fingerTable.length; i++) {
-//				ID nodeID = (i == 0) ? getNodeID() : fingerTable[i - 1].getNodeID(); 
-//				first = nodeID.compareTo(info.getRange()) != 1; 					
-//				second = info.getRange().compareTo(fingerTable[i].getNodeID()) != 1;
-//				third = !(info.getRange().compareTo(fingerTable[i].getNodeID()) == 0);
-//				fourth = fingerTable[i].getNodeID().compareTo(getNodeID()) == -1;
-//				fifth = fingerTable[i+1].getNodeID().compareTo(info.getRange()) == 1;
-//				sixth = fingerTable[i+1].getNodeID().compareTo(getNodeID()) == -1;
-//				System.out.println(nodeID + " <= " + info.getRange() + " <= " + fingerTable[i].getNodeID());
-//				
-//				if (((first & !second) & third) || (!first & !second & !fourth) || (!first & !fourth)) { //(!first & second & !fourth) || 
-//					System.out.println(getNodeID() + " send to " + fingerTable[i].getNodeID());
-//					if ((i == fingerTable.length - 1) || (first & !second & fifth) || (!first & second)) {
-//						nodeInfo = new Broadcast(info.getRange(), info.getSource(), info.getTarget(), info.getTransaction(), info.getHit());						
-//					} else {
-//						nodeInfo = new Broadcast(fingerTable[i + 1].getNodeID(), info.getSource(), info.getTarget(), info.getTransaction(), info.getHit());						
-//					}
-//					fingerTable[i].broadcast(nodeInfo);
-//				} else {
-//					break;
-//				}				
+				distNextFingerID = getDistance(fingerTable[i + 1].getNodeID());			
 				
-//				if ((first ^ second) & third) {
-//					System.out.println(getNodeID() + " send to " + fingerTable[i].getNodeID());
-//					if (i == fingerTable.length - 1) {
-//						nodeInfo = new Broadcast(info.getRange(), info.getSource(), info.getTarget(), info.getTransaction(), info.getHit());						
-//					} else {
-//						nodeInfo = new Broadcast(fingerTable[i + 1].getNodeID(), info.getSource(), info.getTarget(), info.getTransaction(), info.getHit());						
-//					}
-//					fingerTable[i].broadcast(nodeInfo);
-//					
-//				} else {
-//					break;
-//				}
-//				
-//				
-//			}
-//		}
+				if (distFingerID.compareTo(distRangeID) == -1) {
+					ID infoID = (distNextFingerID.compareTo(distRangeID) == -1) ? fingerTable[i + 1].getNodeID() : info.getRange() ;
+					Broadcast newInfo = new Broadcast(infoID, info.getSource(), info.getTarget(), info.getTransaction(), info.getHit());
+					fingerTable[i].broadcast(newInfo);
+				}				
 		
-
-		
-		
-		
-		
-		
-		
-		
-		
-/**************************************************************************************************************/		
-		
-		
-		
-		
-		
-//		boolean wrap = false;
-//		boolean isWrapped = false;
-//		Broadcast nodeInfo; 
-//		Node[] fingerTable = impl.getFingerTable().toArray(new Node[impl.getFingerTable().size()]);
-////		Arrays.sort(fingerTable);
-//		fingerTable = FingerTableSort.sort(fingerTable, getNodeID());
-//		
-//		System.out.println(getNodeID() + " -> " + info.getRange());
-//		
-//		
-//		if (getNodeID().compareTo(info.getRange()) == 1) {
-//			wrap = true;
-//		}
-//		
-//		System.out.println(wrap);
-//		
-//		for (int i = 0; i < fingerTable.length; i++) {
-//			
-//			
-//			if (wrap == false) {
-//				if (fingerTable[i].getNodeID().compareTo(info.getRange()) == -1) {
-//					if (i == fingerTable.length - 1) {
-//						nodeInfo = new Broadcast(info.getRange(), info.getSource(), info.getTarget(), info.getTransaction(), info.getHit());					
-//						System.out.println(getNodeID() + " -> " + info.getRange());
-//					} else {
-//						nodeInfo = new Broadcast(fingerTable[i + 1].getNodeID(), info.getSource(), info.getTarget(), info.getTransaction(), info.getHit());
-//						System.out.println(getNodeID() + " -> " + fingerTable[i + 1].getNodeID());
-//					}
-////					fingerTable[i].broadcast(nodeInfo);
-//				} else {
-//					break;
-//				}
-//			} else {
-//				
-//				if (isWrapped == false && getNodeID().compareTo(fingerTable[i].getNodeID()) == 1) {
-//					isWrapped = true;
-//				}
-//
-//				if (isWrapped) {
-//					if (fingerTable[i].getNodeID().compareTo(info.getRange()) == -1) {
-//						if (i == fingerTable.length - 1) {
-//							nodeInfo = new Broadcast(info.getRange(), info.getSource(), info.getTarget(), info.getTransaction(), info.getHit());
-//							System.out.println(getNodeID() + " -> " + info.getRange());
-//						} else {
-//							nodeInfo = new Broadcast(fingerTable[i + 1].getNodeID(), info.getSource(), info.getTarget(), info.getTransaction(), info.getHit());
-//							System.out.println(getNodeID() + " -> " + fingerTable[i + 1].getNodeID());
-//						}
-////						fingerTable[i].broadcast(nodeInfo);	
-//					}
-//				} else {
-//					if (fingerTable[i].getNodeID().compareTo(info.getRange()) == 1) {
-//						nodeInfo = new Broadcast(fingerTable[i + 1].getNodeID(), info.getSource(), info.getTarget(), info.getTransaction(), info.getHit());
-//						//					fingerTable[i].broadcast(nodeInfo);
-//						System.out.println(getNodeID() + " -> " + fingerTable[i + 1].getNodeID());
-//					}
-//				}
-//			}
-//			System.out.println(getNodeID() + " : " + i + ":" + fingerTable.length + "; " + isWrapped);				
-//			
-//		}
+			}
+		}
 		
 	}
 
+	private ID getDistance(ID dstID) {
+		byte[] max = new byte[20];
+		Arrays.fill(max, (byte) 255);
+		ID maxID = new ID(max);
+		ID srcID = getNodeID();
+		
+		BigInteger dist = dstID.toBigInteger().add(maxID.toBigInteger()).subtract(srcID.toBigInteger()).mod(maxID.toBigInteger());
+		byte[] tmp = new byte[20];
+		
+		if (dist.toByteArray().length > 20) {
+			System.arraycopy(dist.toByteArray(), 1, tmp, 0, tmp.length);
+		} else {
+			tmp = dist.toByteArray(); 
+		}
+
+		return new ID(tmp);
+	}
+	
 }

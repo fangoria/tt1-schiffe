@@ -28,7 +28,7 @@ public class StartChord {
 		String protocol = URL.KNOWN_PROTOCOLS.get(URL.SOCKET_PROTOCOL);
 		URL localURL = null;
 		try {
-			localURL = new URL(protocol + "://141.22.26.43:7080/");
+			localURL = new URL(protocol + "://localhost:8080/");
 		} catch (MalformedURLException e) {
 			throw new RuntimeException(e);
 		}

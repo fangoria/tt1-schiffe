@@ -15,7 +15,7 @@ import de.uniba.wiai.lspi.chord.service.impl.ChordImpl;
 public class Main {
 
 	static final String URL1 = "ocsocket://localhost:4245/";
-	private static final int NODECOUNT = 8;
+	private static final int NODECOUNT = 5;
 
 	/**
 	 * @param args
@@ -28,7 +28,8 @@ public class Main {
 		for (int i = 1; i < NODECOUNT; i++) {
 			new Random().nextBytes(z);
 //			z[0] = (byte)(i * 10);
-			ci[i] = addChord(new ID(z), (i + 7080), (i - 1 + 7080));
+//			ci[i] = addChord(new ID(z), (i + 7080), (i - 1 + 7080));
+			ci[i] = addChord(new ID(z), i + 6890, 8080);
 			System.out.println(new ID(z));
 		}
 		
@@ -77,13 +78,13 @@ public class Main {
 		NotifyCallback nc = new NotifyCallbackImpl();
 		URL localURL = null;
 		try {
-			localURL = new URL(protocol + "://141.22.26.43:" + port + "/");
+			localURL = new URL(protocol + "://192.168.1.250:" + port + "/");
 		} catch (MalformedURLException e) {
 			throw new RuntimeException(e);
 		}
 		URL bootstrapURL = null;
 		try {
-			bootstrapURL = new URL(protocol + "://141.22.26.43:" + bootPort + "/");
+			bootstrapURL = new URL(protocol + "://192.168.1.133:" + bootPort + "/");
 		} catch (MalformedURLException e) {
 			throw new RuntimeException(e);
 		}
