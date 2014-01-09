@@ -31,7 +31,6 @@ import static de.uniba.wiai.lspi.util.logging.Logger.LogLevel.DEBUG;
 import static de.uniba.wiai.lspi.util.logging.Logger.LogLevel.INFO;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -535,7 +534,6 @@ public final class ChordImpl implements Chord, Report, AsynChord {
 	 *             <code>boostrapURL</code> is null!
 	 */
 	private final void joinHelp(URL bootstrapURL) throws ServiceException {
-
 		// create local repository for entries
 		this.entries = new Entries();
 
@@ -756,10 +754,6 @@ public final class ChordImpl implements Chord, Report, AsynChord {
 		// determine ID for key
 		ID id = this.hashFunction.getHashKey(key);
 		// TODO RAUSNEHMEN!!!!
-		byte[] bla = new byte[160];
-		Arrays.fill(bla, Byte.MIN_VALUE);
-		bla[2] = Byte.MAX_VALUE;
-		id = new ID(bla);
 		Entry entryToInsert = new Entry(id, s);
 
 		boolean debug = this.logger.isEnabledFor(DEBUG);
@@ -1169,14 +1163,12 @@ public final class ChordImpl implements Chord, Report, AsynChord {
 		Broadcast info; 
 		int transactionID = (int) (Math.random()* 13370815);
 		
-		System.out.println("Start");
-		
 		Node[] fingerTable = this.getFingerTable().toArray(new Node[this.getFingerTable().size()]);		
 		fingerTable = FingerTableSort.sort(fingerTable, getID());
 		
-		for (int i = 0; i < fingerTable.length; i++) {
-			System.out.println(fingerTable[i].getNodeID());			
-		}
+//		for (int i = 0; i < fingerTable.length; i++) {
+//			System.out.println(fingerTable[i].getNodeID());			
+//		}
 		
 		for (int i = 0; i < fingerTable.length; i++) {
 			if (i == fingerTable.length - 1) {
