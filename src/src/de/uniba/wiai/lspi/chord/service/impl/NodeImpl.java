@@ -31,6 +31,7 @@ import static de.uniba.wiai.lspi.util.logging.Logger.LogLevel.DEBUG;
 import static de.uniba.wiai.lspi.util.logging.Logger.LogLevel.INFO;
 
 import java.math.BigInteger;
+import java.sql.NClob;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -441,7 +442,7 @@ public final class NodeImpl extends Node {
 		System.out.println("Got Broadcast: " + getNodeID());
 		System.out.println(info);
 		System.out.println();
-		
+		notifyCallback.broadcast(info.getSource(), info.getTarget(), info.getHit());
 		ID distRangeID;
 		ID distFingerID;
 		ID distNextFingerID;

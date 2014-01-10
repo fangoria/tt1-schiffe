@@ -118,7 +118,7 @@ public class Game {
 				tmpPlayer.setNode(tmpNode);
 				player.add(tmpPlayer);
 				
-				for (int i = 0; i < 5; i++) {
+				for (int i = 0; i < 1; i++) {
 					String tmpPort = (2313 + i) + "";
 					System.out.print("|");
 					tmpPlayer = new Player();
@@ -131,13 +131,19 @@ public class Game {
 				input.next();
 				if (!player.isEmpty()) {
 //					player.get(0).getNode().getID()
-					byte[] id = new byte[20];
-					id[0] = (byte) 255;
-					ID chordID = new ID(id);
+//					byte[] id = new byte[20];
+//					id[0] = (byte) 255;
+//					ID chordID = new ID(id);
 //					ID chordID = ID.valueOf(player.get(0).getNode().getID().toBigInteger().add(new BigInteger("10000000000000000000000")));
-					System.out.println(chordID);
-					
-					player.get(0).getNode().retrieve(chordID);
+//					System.out.println(chordID);
+					player.get(0).initFleets();
+					player.get(1).initFleets();
+//					player.get(2).initFleets();
+//					player.get(3).initFleets();
+//					player.get(4).initFleets();
+					for (int i = 0; i < 10; i++) {						
+						player.get((i%2)).fire();
+					}
 				}
 			} else {
 				input.next();
