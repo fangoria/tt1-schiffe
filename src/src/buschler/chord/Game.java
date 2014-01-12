@@ -6,7 +6,6 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import de.uniba.wiai.lspi.chord.com.Node;
-import de.uniba.wiai.lspi.chord.data.ID;
 import de.uniba.wiai.lspi.chord.service.PropertiesLoader;
 import de.uniba.wiai.lspi.chord.service.impl.ChordImpl;
 
@@ -118,7 +117,7 @@ public class Game {
 				tmpPlayer.setNode(tmpNode);
 				player.add(tmpPlayer);
 				
-				for (int i = 0; i < 1; i++) {
+				for (int i = 0; i < 2; i++) {
 					String tmpPort = (2313 + i) + "";
 					System.out.print("|");
 					tmpPlayer = new Player();
@@ -136,8 +135,12 @@ public class Game {
 //					ID chordID = new ID(id);
 //					ID chordID = ID.valueOf(player.get(0).getNode().getID().toBigInteger().add(new BigInteger("10000000000000000000000")));
 //					System.out.println(chordID);
-					player.get(0).initFleets();
-					player.get(1).initFleets();
+					for (Player player2 : player) {
+						player2.initFleets();
+						
+					}
+					
+//					player.get(1).initFleets();
 //					player.get(2).initFleets();
 //					player.get(3).initFleets();
 //					player.get(4).initFleets();
@@ -156,8 +159,8 @@ public class Game {
 		
 	}
 	
-	private static void initFleet(List<Player> player) {
-		
-	}
+//	private static void initFleet(List<Player> player) {
+//		
+//	}
 
 }

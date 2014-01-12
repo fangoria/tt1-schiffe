@@ -20,15 +20,6 @@ public class Fleet {
 	private int I; // Anzahl Felder
 	private int S; // Anzahl Schiffe
 
-	// static {
-	// byte[] max = new byte[20];
-	// Arrays.fill(max, (byte) 255);
-	// idMax = new BigInteger(max);
-	// System.out.println("lalala");
-	// System.out.println("big: " + idMax);
-	// System.out.println("id:  " + new ID(idMax.toByteArray()));
-	// }
-
 	enum radar {
 		HIT, MISS, UNKNOWN;
 	}
@@ -161,29 +152,38 @@ public class Fleet {
 	}
 
 	public int calculateFieldFromID(ID id) {
-		BigInteger tmp = id.toBigInteger();
+		ID tmp = id;
 		int result;
 		if (idStart.compareTo(id) == 1) {// wrap around
-			tmp = tmp.add(idMax.toBigInteger()).subtract(idStart.toBigInteger());
+			tmp = new ID((tmp.toBigInteger().add(idMax.toBigInteger()).subtract(idStart.toBigInteger())).toByteArray());
 		} else {
-			tmp = tmp.subtract(idStart.toBigInteger());
+			tmp = new ID((tmp.toBigInteger().subtract(idStart.toBigInteger())).toByteArray());
 		}
 
-		tmp = tmp.divide(fieldSize.toBigInteger());
-		result = Integer.valueOf(tmp.toString());
+		System.out.println(tmp);
+		tmp = normalizeID(tmp);
+		System.out.println(tmp);
+		
+		tmp = new ID((tmp.toBigInteger().divide(fieldSize.toBigInteger())).toByteArray());
+		
+		System.out.println(tmp);
+		tmp = normalizeID(tmp);
+		System.out.println(tmp);
+		
+		result = Integer.valueOf(tmp.toBigInteger().toString());
 		if (result >= this.I) {
 			result = this.I - 1;
 		}
 
-//		System.out.println("vvvvvvvvvv calculateFieldFromID vvvvvvvvvv");
-//		System.out.println("The fieldsize is " + fieldSize);
-//		System.out.println("The field for ID " + id + " is " + (result + 1));
-//		System.out.println("^^^^^^^^^^ calculateFieldFromID ^^^^^^^^^^");
+		System.out.println("vvvvvvvvvv calculateFieldFromID vvvvvvvvvv");
+		System.out.println("The fieldsize is " + fieldSize);
+		System.out.println("The field for ID " + id + " is " + (result + 1));
+		System.out.println("^^^^^^^^^^ calculateFieldFromID ^^^^^^^^^^");
 
 		return result + 1;
 	}
 
-	private void calculateFieldSize() {
+	public void calculateFieldSize() {
 		fieldSize = new ID((calculateDistance().toBigInteger().divide(new BigInteger("" + this.I))).toByteArray());
 		fieldSize = normalizeID(fieldSize);
 //		System.out.println("vvvvvvvvvv calculateFieldSize vvvvvvvvvv");
@@ -218,9 +218,9 @@ public class Fleet {
 		return dist;
 	}
 
-	private void calculateFleetDeployment() {
-
-	}
+//	private void calculateFleetDeployment() {
+//
+//	}
 
 	private ID normalizeID(ID id) {
 		byte[] tmp = new byte[20];
@@ -236,16 +236,16 @@ public class Fleet {
 		return new ID(tmp);
 	}
 
-	private BigInteger addLeadingZero(BigInteger id) {
-		byte[] tmp = new byte[21];
-
-		if (id.toByteArray().length < 21) {
-			System.arraycopy(id.toByteArray(), 0, tmp, 1, id.toByteArray().length);
-		} else {
-			tmp = id.toByteArray();
-		}
-
-		return new BigInteger(tmp);
-	}
+//	private BigInteger addLeadingZero(BigInteger id) {
+//		byte[] tmp = new byte[21];
+//
+//		if (id.toByteArray().length < 21) {
+//			System.arraycopy(id.toByteArray(), 0, tmp, 1, id.toByteArray().length);
+//		} else {
+//			tmp = id.toByteArray();
+//		}
+//
+//		return new BigInteger(tmp);
+//	}
 
 }

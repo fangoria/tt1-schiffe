@@ -14,29 +14,25 @@ public class Player implements NotifyCallback {
 	private ChordImpl node;
 	private List<Fleet> ocean;
 	private Fleet mightyArmada;
-
-	private static int COUNT = 0;
 	
 	public Player() {
 
 	}
-
+	
 	@Override
 	public void retrieved(ID target) {
-		COUNT++;
-//		System.out.println(target);
-//		System.out.println(node);
-		// node.broadcast(target, false);
 		System.out.println("vvvvvvvvvv retrieved vvvvvvvvvv");
-		System.out.println("COUNT = " + COUNT);
-		System.out.println("Someone is shooting at me on field " + target);
-		System.out.println("He has " + ocean.get(0).getNumberOfHits() + " hits");
+		System.out.println(getNode().getID());
+		System.out.println("Someone is shooting at me on field " + target + " [" + mightyArmada.calculateFieldFromID(target) + "]");
+		for (Fleet fleet : ocean) {
+			System.out.println("Fleet " + fleet.getIdEnd() + " has " + fleet.getNumberOfHits() + " hits.");
+		}
 		System.out.println("^^^^^^^^^^ retrieved ^^^^^^^^^^");
 		node.broadcast(target, handleAttack(target));
-
-		if (!victory()) {
+		if (!victory() && mightyArmada.calculateFieldFromID(target) > 0) {
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(200);					
+				
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -49,11 +45,20 @@ public class Player implements NotifyCallback {
 						+ ocean.get(i).getNumberOfMisses() + " misses.");
 			}
 		}
+
+		if (target.getBytes()[0] == 0 && target.getBytes()[0] == 92) {
+			System.out.println("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
+		} else {
+			
+		}
+		
 	}
 
 	@Override
 	public void broadcast(ID source, ID target, Boolean hit) {
-		System.out.println("souce: " + source + "   target: " + target + "   hit: " + hit);
+		if (!checkParticipant(source)) {
+			newEnemyFleetDetected(source);
+		}
 		handleAttackOnEnemy(source, target, hit);
 	}
 
@@ -100,26 +105,99 @@ public class Player implements NotifyCallback {
 		System.out.println("vvvvvvvvvv initFleets vvvvvvvvvv");
 		System.out.println("Anzahl Fingertable: " + fingerTable.length);
 		System.out.println("Anzahl Flotten    : " + (ocean.size() + 1));
+		i = 0;
+		System.out.println("My Fleet: " + mightyArmada.getIdStart() + " -> " + mightyArmada.getIdEnd());
 		for (Fleet fleet : ocean) {
-			System.out.println("Fleet[" + i + "]: " + fleet.getIdEnd());
+			System.out.println("Fleet[" + ++i + "]: " + fleet.getIdStart() + " -> " + fleet.getIdEnd());
 		}
 		System.out.println("^^^^^^^^^^ initFleets ^^^^^^^^^^");
 		System.out.println();
 
 	}
 
+	/**
+	 * 
+	 * @param id
+	 * @return true if he knows the id
+	 */
 	private boolean checkParticipant(ID id) {
 		boolean result = false;
-		for (int i = 0; i < ocean.size() && result != true; i++) {
-			// result = (ocean.get(i).getIdEnd().compareTo(id.toBigInteger()) ==
-			// 0);
-			result = (ocean.get(i).getIdEnd().compareTo(id) == 0);
+		for (Fleet fleet : ocean) {
+			result = (fleet.getIdEnd().compareTo(id) == 0);
+			if (result) {
+				break;
+			}
 		}
+		System.out.println("Ein neuer? -> " + !result);
 		return result;
 	}
 
 	private void newEnemyFleetDetected(ID newRabbit) {
-		// NOT YET
+//		ID start = ocean.get(ocean.size() - 1).getIdEnd();
+//		ID end = ocean.get(0).getIdEnd();;
+		
+		List<Fleet> tmpOcean = new ArrayList<Fleet>();
+		tmpOcean.addAll(ocean);
+		tmpOcean.add(mightyArmada);
+		
+		Fleet start = null;
+		Fleet end = null;
+		
+		System.out.println("vvvvvvvvvv newEnemyFleetDetected vvvvvvvvvv");
+		
+		System.out.println(newRabbit);
+		
+		System.out.println("<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>");
+		System.out.println(mightyArmada.getIdEnd());
+		
+		for (int i = 0; i < tmpOcean.size(); i++) {
+			if (tmpOcean.get(i).getIdEnd().compareTo(newRabbit) == 1) {
+				if (end == null || tmpOcean.get(i).getIdEnd().compareTo(end.getIdEnd()) == -1) {
+					end = tmpOcean.get(i); 					
+				}
+			} else if (tmpOcean.get(i).getIdEnd().compareTo(newRabbit) == -1) {
+				if (start == null || tmpOcean.get(i).getIdEnd().compareTo(start.getIdEnd()) == 1) {
+					start = tmpOcean.get(i);					
+				}
+			}
+			
+		}
+		
+		if (end == null) {
+			for (Fleet fleet : tmpOcean) {
+				if (end == null || fleet.getIdEnd().compareTo(end.getIdEnd()) == -1) {
+					end = fleet;
+				}
+			}
+		}
+		
+		if (start == null) {
+			for (Fleet fleet : tmpOcean) {
+				if (start == null || fleet.getIdEnd().compareTo(start.getIdEnd()) == 1) {
+					start = fleet;
+				}
+			}
+		}
+
+		Fleet fleet = new Fleet(newRabbit, start.getIdEnd());
+		ocean.add(fleet);
+		end.setIdStart(newRabbit);
+		end.calculateFieldSize();
+		
+		
+		System.out.println(mightyArmada.getIdStart() + " -> " + mightyArmada.getIdEnd());
+		for (Fleet f : ocean) {
+			System.out.println(f.getIdStart() + " -> " + f.getIdEnd());
+		}
+		
+		if (start != null) System.out.println("Start: " + start.getIdEnd());
+		if (end != null) System.out.println("End: " + end.getIdEnd());
+		
+	
+		System.out.println("^^^^^^^^^^ newEnemyFleetDetected ^^^^^^^^^^");
+		
+		
+		
 	}
 
 	private boolean handleAttack(ID target) {
@@ -149,24 +227,27 @@ public class Player implements NotifyCallback {
 
 	public void fire() {
 		Fleet target = null;
+		ID field = null;
 		for (Fleet rabbitFleet : ocean) {
-			if (target == null || target.getNumberOfHits() < rabbitFleet.getNumberOfHits()) {
+			if (target == null || target.getNumberOfHits() > rabbitFleet.getNumberOfHits()) {
 				target = rabbitFleet;
 			}
 		}
-
-		for (int i = 1; i <= target.getI(); i++) {
+		
+		int i;
+		for (i = 1; i <= target.getI(); i++) {
 			if (target.getFleetDeployment(i) == radar.UNKNOWN) {
-				node.retrieve(target.calculateIDFromField(i));
-				System.out.println("vvvvvvvvvv fire vvvvvvvvvv");
-				System.out.println("Node                " + getNode().getID());
-				System.out.println("is shooting at Node " + target.calculateIDFromField(i));
-				System.out.println("to field            " + target.calculateIDFromField(i) + " [" + i + "]");
-				System.out.println("noh: " + target.getNumberOfHits());
-				System.out.println("^^^^^^^^^^ fire ^^^^^^^^^^");
+				field = target.calculateIDFromField(i);
 				break;
 			}
 		}
+		System.out.println("vvvvvvvvvv fire vvvvvvvvvv");
+		System.out.println("Node                " + getNode().getID());
+		System.out.println("is shooting at Node " + target.getIdEnd());
+		System.out.println("to field            " + field + " [" + i + "]");
+		System.out.println("noh: " + target.getNumberOfHits());
+		System.out.println("^^^^^^^^^^ fire ^^^^^^^^^^");
+		node.retrieve(field);
 	}
 
 	private boolean victory() {
