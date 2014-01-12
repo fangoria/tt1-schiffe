@@ -30,9 +30,9 @@ public class Game {
 		PropertiesLoader.loadPropertyFile();
 		List<Player> player = new ArrayList<Player>();
 		String ip = "127.0.0.1";
-		String bIp = "127.0.0.1";
 		String port = "7081";
-		String bPort = "8080";
+		String bootstrapIp = "127.0.0.1";
+		String bootstrapPort = "8080";
 		
 		while (run) {
 						
@@ -52,7 +52,7 @@ public class Game {
 					if (input.hasNext(Pattern.compile("[1-9][0-9][0-9][0-9]"))) {
 						port = input.next();
 						Player tmpPlayer = new Player();
-						ChordImpl tmpNode = Chord.addChord(ip, port, bIp, bPort, tmpPlayer);
+						ChordImpl tmpNode = Chord.addChord(ip, port, bootstrapIp, bootstrapPort, tmpPlayer);
 						tmpPlayer.setNode(tmpNode);
 						player.add(tmpPlayer);
 						System.out.println("Added Chord " + tmpNode.getID());
@@ -68,7 +68,7 @@ public class Game {
 			} else if (input.hasNext("init")) {
 				input.next();
 				Player tmpPlayer = new Player();
-				ChordImpl tmpNode = StartChord.init(bIp, bPort, tmpPlayer);	
+				ChordImpl tmpNode = StartChord.init(bootstrapIp, bootstrapPort, tmpPlayer);	
 				tmpPlayer.setNode(tmpNode);
 				player.add(tmpPlayer);
 			} else if (input.hasNext("bootstrap")) {
@@ -78,11 +78,11 @@ public class Game {
 												  "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
 												  "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
 												  "([01]?\\d\\d?|2[0-4]\\d|25[0-5])"))) {
-					bIp = input.next();
+					bootstrapIp = input.next();
 					System.out.print("PORT: ");
 					if (input.hasNext(Pattern.compile("[1-9][0-9][0-9][0-9]"))) {
-						bPort = input.next();
-						System.out.println("Set bootstrap node for future nodes to " + bIp + ":" + bPort);
+						bootstrapPort = input.next();
+						System.out.println("Set bootstrap node for future nodes to " + bootstrapIp + ":" + bootstrapPort);
 					} else {
 						input.next();
 						System.out.println("No valid Port!");
@@ -114,7 +114,7 @@ public class Game {
 			} else if (input.hasNext("demo")) {
 				input.next();
 				Player tmpPlayer = new Player();
-				ChordImpl tmpNode = StartChord.init(bIp, bPort, tmpPlayer);	
+				ChordImpl tmpNode = StartChord.init(bootstrapIp, bootstrapPort, tmpPlayer);	
 				tmpPlayer.setNode(tmpNode);
 				player.add(tmpPlayer);
 				
@@ -122,7 +122,7 @@ public class Game {
 					String tmpPort = (2313 + i) + "";
 					System.out.print("|");
 					tmpPlayer = new Player();
-					tmpNode = Chord.addChord(ip, tmpPort, bIp, bPort, tmpPlayer);
+					tmpNode = Chord.addChord(ip, tmpPort, bootstrapIp, bootstrapPort, tmpPlayer);
 					tmpPlayer.setNode(tmpNode);
 					player.add(tmpPlayer);
 				}
@@ -141,7 +141,7 @@ public class Game {
 //					player.get(2).initFleets();
 //					player.get(3).initFleets();
 //					player.get(4).initFleets();
-					for (int i = 0; i < 10; i++) {						
+					for (int i = 0; i < 6; i++) {						
 						player.get((i%2)).fire();
 					}
 				}
