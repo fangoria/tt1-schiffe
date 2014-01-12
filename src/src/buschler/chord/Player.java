@@ -15,28 +15,40 @@ public class Player implements NotifyCallback {
 	private List<Fleet> ocean;
 	private Fleet mightyArmada;
 
+	private static int COUNT = 0;
+	
 	public Player() {
 
 	}
 
 	@Override
 	public void retrieved(ID target) {
-		System.out.println(target);
-		System.out.println(node);
+		COUNT++;
+//		System.out.println(target);
+//		System.out.println(node);
 		// node.broadcast(target, false);
+		System.out.println("vvvvvvvvvv retrieved vvvvvvvvvv");
+		System.out.println("COUNT = " + COUNT);
+		System.out.println("Someone is shooting at me on field " + target);
+		System.out.println("He has " + ocean.get(0).getNumberOfHits() + " hits");
+		System.out.println("^^^^^^^^^^ retrieved ^^^^^^^^^^");
 		node.broadcast(target, handleAttack(target));
 
-		if (ocean.get(0).getNumberOfHits() < 4) {
-			// fire();
-
+		if (!victory()) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			fire();
 		} else {
-			victory();
+			System.err.println("Jemand hat gewonnen!");
+			for (int i = 0; i < ocean.size(); i++) {
+				System.out.println("Fleet[" + i + "] has " + ocean.get(i).getNumberOfHits() + " hits and "
+						+ ocean.get(i).getNumberOfMisses() + " misses.");
+			}
 		}
-		
-		System.out.println("vvvvvvvvvv retrieved vvvvvvvvvv");
-		System.out.println("Someone is shooting at me on field " + target);
-		System.out.println("^^^^^^^^^^ retrieved ^^^^^^^^^^");
-		
 	}
 
 	@Override
@@ -143,7 +155,6 @@ public class Player implements NotifyCallback {
 			}
 		}
 
-		
 		for (int i = 1; i <= target.getI(); i++) {
 			if (target.getFleetDeployment(i) == radar.UNKNOWN) {
 				node.retrieve(target.calculateIDFromField(i));
@@ -158,7 +169,15 @@ public class Player implements NotifyCallback {
 		}
 	}
 
-	private void victory() {
-		System.out.println("SIEEEEEEEEEEEEEGGGGGGG!!!!!!!!!!!!!!!!!!!!");
+	private boolean victory() {
+		boolean isEnd = false;
+
+		for (Fleet fleet : ocean) {
+			if (fleet.getNumberOfHits() == 10) {
+				isEnd = true;
+			}
+		}
+
+		return isEnd;
 	}
 }

@@ -141,9 +141,10 @@ public class Game {
 //					player.get(2).initFleets();
 //					player.get(3).initFleets();
 //					player.get(4).initFleets();
-					for (int i = 0; i < 6; i++) {						
-						player.get((i%2)).fire();
-					}
+					player.get(0).fire();
+//					for (int i = 0; i < 100; i++) {						
+//						player.get((i%2)).fire();
+//					}
 				}
 			} else {
 				input.next();
