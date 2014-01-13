@@ -92,13 +92,14 @@ public class Game {
 			} else if (input.hasNext("add2")) {
 				input.next();
 
-				for (int i = 0; i < 1; i++) {
+				for (int i = 0; i < 2; i++) {
 					String tmpPort = (2313 + i) + "";
 					System.out.print("|");
 					Player tmpPlayer = new Player();
 					tmpPlayer.setNode(Chord.addChord(ip, tmpPort, bootstrapIp,
 							bootstrapPort, tmpPlayer));
 					player.add(tmpPlayer);
+					tmpPlayer.initFleets();
 				}
 				System.out.println("!");
 

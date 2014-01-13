@@ -36,7 +36,7 @@ public class Player implements NotifyCallback {
 //				// TODO Auto-generated catch block
 //				e.printStackTrace();
 //			}
-//			fire();
+			fire();
 		} else {
 			System.err.println("Jemand hat gewonnen! Bei transactionID: " + node.getTransactionID());
 
@@ -79,17 +79,22 @@ public class Player implements NotifyCallback {
 		ocean = new ArrayList<Fleet>();
 
 		// Set ship to first field, only for debug
-//		mightyArmada.setFleetDeployment(1, radar.HIT);
+		mightyArmada.setFleetDeployment(1, radar.HIT);
+		mightyArmada.setFleetDeployment(2, radar.HIT);
+		mightyArmada.setFleetDeployment(3, radar.HIT);
+		mightyArmada.setFleetDeployment(4, radar.HIT);
+		mightyArmada.setFleetDeployment(99, radar.HIT);
 
 		// Set 10 ships to random fields
 		int i = 0;
-		while (i < mightyArmada.getS()) {
+		while (i < mightyArmada.getS() - 5) {
 			int rnd = (int) (Math.random() * mightyArmada.getI()) + 1;
 			if (mightyArmada.getFleetDeployment(rnd) == radar.UNKNOWN) {
 				mightyArmada.setFleetDeployment(rnd, radar.HIT);
 				i++;
 			}
 		}
+		
 
 		Node[] fingerTable = node.getFingerTable().toArray(new Node[node.getFingerTable().size()]);
 		fingerTable = FingerTableSort.sort(fingerTable, node.getID());

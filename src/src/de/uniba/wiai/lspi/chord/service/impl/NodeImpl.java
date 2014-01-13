@@ -438,7 +438,7 @@ public final class NodeImpl extends Node {
 	// TODO: implement this function in TTP
 	@Override
 	public void broadcast(Broadcast info) throws CommunicationException {		
-		System.out.println("Got Broadcast: " + getNodeID());
+//		System.out.println("Got Broadcast: " + getNodeID());
 		notifyCallback.broadcast(info.getSource(), info.getTarget(), info.getHit());
 		ID distRangeID;
 		ID distFingerID;
