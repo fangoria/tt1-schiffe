@@ -1059,16 +1059,12 @@ public final class ChordImpl implements Chord, Report, AsynChord {
 	@Override
 	public void broadcast(ID target, Boolean hit) {
 		Broadcast info;
-//		int transactionID = (int) (Math.random() * 13370815);
 
 		Node[] fingerTable = this.getFingerTable().toArray(new Node[this.getFingerTable().size()]);
 		fingerTable = FingerTableSort.sort(fingerTable, getID());
 
-		// for (int i = 0; i < fingerTable.length; i++) {
-		// System.out.println(fingerTable[i].getNodeID());
-		// }
-
-		for (int i = 0; i < fingerTable.length; i++) {
+		int i = 0;
+		for (; i < fingerTable.length; i++) {
 			if (i == fingerTable.length - 1) {
 				info = new Broadcast(getID(), getID(), target, transactionID, hit);
 			} else {
@@ -1078,7 +1074,8 @@ public final class ChordImpl implements Chord, Report, AsynChord {
 			try {
 				fingerTable[i].broadcast(info);
 			} catch (CommunicationException e) {
-				System.err.println("\n\nFAIL!\n\n" + e);
+//				System.err.println("Can't send to:" + fingerTable[i].getNodeID());
+//				System.err.println(e);
 			}
 		}
 

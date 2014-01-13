@@ -1200,6 +1200,7 @@ public final class SocketProxy extends Proxy implements Runnable {
 			this.send(request);
 		} catch (CommunicationException ce) {
 			logger.debug("Connection failed!");
+			System.out.println("HIHIHIHIHIHIHIHIHIH");
 			throw ce;
 		}
 		/* wait for response */

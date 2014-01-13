@@ -28,9 +28,9 @@ public class Game {
 		Scanner input = new Scanner(System.in);
 		PropertiesLoader.loadPropertyFile();
 		List<Player> player = new ArrayList<Player>();
-		String ip = "127.0.0.1";
+		String ip = "141.22.26.43";
 		String port = "7081";
-		String bootstrapIp = "127.0.0.1";
+		String bootstrapIp = "141.22.26.43";
 		String bootstrapPort = "8080";
 
 		while (run) {
@@ -39,6 +39,7 @@ public class Game {
 				input.next();
 				run = !run;
 				System.out.println("Good Bye!");
+				
 			} else if (input.hasNext("add")) {
 				input.next();
 				System.out.print("IP: ");
@@ -73,6 +74,7 @@ public class Game {
 						tmpPlayer);
 				tmpPlayer.setNode(tmpNode);
 				player.add(tmpPlayer);
+				System.out.println("Added Chord " + tmpNode.getID());
 			} else if (input.hasNext("bootstrap")) {
 				input.next();
 				System.out.print("IP: ");
@@ -97,33 +99,18 @@ public class Game {
 					System.out.println("No valid IP!");
 				}
 
-			} else if (input.hasNext("arrrgh!")) {
-				Node[] fingerTable;
-				StringBuffer buf;
+			} else if (input.hasNext("add2")) {
 				input.next();
 
-				Player[] players = player.toArray(new Player[player.size()]);
-				System.out
-						.println("|---------------------------------------------------------------|");
-				System.out
-						.println("|------------------------Fingertables---------------------------|");
-				System.out
-						.println("|---------------------------------------------------------------|");
-				for (Player p : players) {
-					fingerTable = p
-							.getNode()
-							.getFingerTable()
-							.toArray(
-									new Node[p.getNode().getFingerTable()
-											.size()]);
-					buf = new StringBuffer("| " + p.getNode().getID() + ": ");
-					for (Node finger : fingerTable) {
-						buf.append("[" + finger.getNodeID() + "] ");
-					}
-					System.out.println(buf.toString());
-					System.out
-							.println("|---------------------------------------------------------------|");
+				for (int i = 0; i < 5; i++) {
+					String tmpPort = (2313 + i) + "";
+					System.out.print("|");
+					Player tmpPlayer = new Player();
+					tmpPlayer.setNode(Chord.addChord(ip, tmpPort, bootstrapIp,
+							bootstrapPort, tmpPlayer));
+					player.add(tmpPlayer);
 				}
+				System.out.println("!");
 
 			} else if (input.hasNext("demo")) {
 				input.next();
@@ -133,7 +120,7 @@ public class Game {
 				tmpPlayer.setNode(tmpNode);
 				player.add(tmpPlayer);
 
-				for (int i = 0; i < 2; i++) {
+				for (int i = 0; i < 4; i++) {
 					String tmpPort = (2313 + i) + "";
 					System.out.print("|");
 					tmpPlayer = new Player();
@@ -143,29 +130,42 @@ public class Game {
 					player.add(tmpPlayer);
 				}
 				System.out.println("!");
+
+				for (Player player2 : player) {
+					player2.initFleets();
+
+				}
+
+				Thread t1 = new Thread(new Runna(player.get(0)));
+				t1.run();
+
+			} else if (input.hasNext("u")) {
+				input.next();
+				
+				System.out.println("Fleet "
+						+ player.get(0).getMightyArmada().getIdEnd() + " has "
+						+ player.get(0).getMightyArmada().getNumberOfHits()
+						+ " hits and "
+						+ player.get(0).getMightyArmada().getNumberOfMisses()
+						+ " misses!");
+				for (Fleet fleet : player.get(0).getOcean()) {
+					System.out.println("Fleet "
+							+ fleet.getIdEnd() + " has "
+							+ fleet.getNumberOfHits()
+							+ " hits and "
+							+ fleet.getNumberOfMisses()
+							+ " misses!");
+				}
+				
+			} else if (input.hasNext("los")) {
+				input.next();
 				
 				for (Player player2 : player) {
 					player2.initFleets();
 
 				}
 				
-				Thread t1 = new Thread(new Runna(player.get(0)));
-				t1.run();
-				
-			} else if (input.hasNext("start")) {
-				input.next();
-			
-			} else if (input.hasNext("u")) {
-				System.out.println("uuuuuuu");
-				input.next();
-				for (Player p : player) {
-					System.out.println("Fleet "
-							+ p.getMightyArmada().getIdEnd() + " has "
-							+ p.getMightyArmada().getNumberOfHits()
-							+ " hits and "
-							+ p.getMightyArmada().getNumberOfMisses()
-							+ " misses!");
-				}
+				player.get(1).fire();
 			} else {
 				input.next();
 			}
@@ -175,7 +175,6 @@ public class Game {
 		input.close();
 
 	}
-
 	// private static void initFleet(List<Player> player) {
 	//
 	// }

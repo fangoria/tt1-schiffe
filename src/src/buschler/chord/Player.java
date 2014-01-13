@@ -21,12 +21,12 @@ public class Player implements NotifyCallback {
 		System.out.println("vvvvvvvvvv retrieved vvvvvvvvvv");
 		System.out.println(getNode().getID());
 		System.out.println("Someone is shooting at me on field " + target + " [" + mightyArmada.calculateFieldFromID(target) + "]");
-		System.out.println("I have " + mightyArmada.getNumberOfHits() + " hits and " + mightyArmada.getNumberOfMisses() + " misses.");
+//		System.out.println("I have " + mightyArmada.getNumberOfHits() + " hits and " + mightyArmada.getNumberOfMisses() + " misses.");
 		for (Fleet fleet : ocean) {
 			System.out.println("Fleet " + fleet.getIdEnd() + " has " + fleet.getNumberOfHits() + " hits.");
 		}
-		System.out.println("^^^^^^^^^^ retrieved ^^^^^^^^^^");		
 		node.broadcast(target, handleAttack(target));		
+		System.out.println("^^^^^^^^^^ retrieved ^^^^^^^^^^");		
 		
 		if (!victory()) {
 //			try {
@@ -79,7 +79,7 @@ public class Player implements NotifyCallback {
 		ocean = new ArrayList<Fleet>();
 
 		// Set ship to first field, only for debug
-		mightyArmada.setFleetDeployment(1, radar.HIT);
+//		mightyArmada.setFleetDeployment(1, radar.HIT);
 
 		// Set 10 ships to random fields
 		int i = 0;
@@ -138,7 +138,7 @@ public class Player implements NotifyCallback {
 	private void newEnemyFleetDetected(ID newRabbit) {
 		List<Fleet> tmpOcean = new ArrayList<Fleet>();
 		tmpOcean.addAll(ocean);
-//		tmpOcean.add(mightyArmada);
+		tmpOcean.add(mightyArmada);
 		
 		Fleet start = null;
 		Fleet end = null;
@@ -228,7 +228,7 @@ public class Player implements NotifyCallback {
 		Fleet target = null;
 		ID field = null;
 		for (Fleet rabbitFleet : ocean) {
-			if (target == null || target.getNumberOfHits() > rabbitFleet.getNumberOfHits()) {
+			if (target == null || target.getNumberOfHits() < rabbitFleet.getNumberOfHits()) {
 				target = rabbitFleet;
 			}
 		}
@@ -236,16 +236,17 @@ public class Player implements NotifyCallback {
 		int i;
 		for (i = 1; i <= target.getI(); i++) {
 			if (target.getFleetDeployment(i) == radar.UNKNOWN) {
+				target.setFleetDeployment(i, radar.MISS);
 				field = target.calculateIDFromField(i);
 				break;
 			}
 		}
-//		System.out.println("vvvvvvvvvv fire vvvvvvvvvv");
-//		System.out.println("Node                " + getNode().getID());
-//		System.out.println("is shooting at Node " + target.getIdEnd());
-//		System.out.println("to field            " + field + " [" + i + "]");
-//		System.out.println("noh: " + target.getNumberOfHits());
-//		System.out.println("^^^^^^^^^^ fire ^^^^^^^^^^");
+		System.out.println("vvvvvvvvvv fire vvvvvvvvvv");
+		System.out.println("Node                " + getNode().getID());
+		System.out.println("is shooting at Node " + target.getIdEnd());
+		System.out.println("to field            " + field + " [" + i + "]");
+		System.out.println("noh: " + target.getNumberOfHits());
+		System.out.println("^^^^^^^^^^ fire ^^^^^^^^^^");
 		shooted = true;
 		node.retrieve(field);
 	}
@@ -254,12 +255,12 @@ public class Player implements NotifyCallback {
 		boolean isEnd = false;
 
 		for (Fleet fleet : ocean) {
-			if (fleet.getNumberOfHits() == 3) {
+			if (fleet.getNumberOfHits() == 10) {
 				isEnd = true;
 			}
 		}
 		
-		if (!isEnd && mightyArmada.getNumberOfHits() == 3) {
+		if (!isEnd && mightyArmada.getNumberOfHits() == 10) {
 			isEnd = true;
 		}
 

@@ -103,7 +103,7 @@ public class Fleet {
 		shots.add(shot);
 	}
 	
-	public synchronized void realignFields() {
+	public void realignFields() {
 		calculateFieldSize();
 		fleetDeployment = new radar[this.I];
 		Arrays.fill(fleetDeployment, radar.UNKNOWN);
