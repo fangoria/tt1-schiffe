@@ -103,11 +103,11 @@ public class Fleet {
 		shots.add(shot);
 	}
 	
-	public void realignFields() {
+	public synchronized void realignFields() {
 		calculateFieldSize();
 		fleetDeployment = new radar[this.I];
 		Arrays.fill(fleetDeployment, radar.UNKNOWN);
-		
+
 		for (Shot shot : shots) {
 			int field = calculateFieldFromID(shot.getTarget()) - 1;
 			if (shot.isHit()) {
@@ -123,9 +123,7 @@ public class Fleet {
 					}
 				}
 			}
-			
 		}
-		
 	}
 
 	public boolean handleAttackOnMightyAmarda(ID target) {

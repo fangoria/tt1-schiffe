@@ -14,6 +14,7 @@ public class Player implements NotifyCallback {
 	private ChordImpl node;
 	private List<Fleet> ocean;
 	private Fleet mightyArmada;
+	private boolean shooted = false;
 	
 	@Override
 	public void retrieved(ID target) {
@@ -28,13 +29,13 @@ public class Player implements NotifyCallback {
 		node.broadcast(target, handleAttack(target));		
 		
 		if (!victory()) {
-			try {
-				Thread.sleep(200);					
-				
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//			try {
+//				Thread.sleep(200);					
+//				
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 			fire();
 		} else {
 			System.err.println("Jemand hat gewonnen! Bei transactionID: " + node.getTransactionID());
@@ -43,6 +44,10 @@ public class Player implements NotifyCallback {
 		
 	}
 
+	public Fleet getMightyArmada() {
+		return mightyArmada;
+	}
+	
 	public List<Fleet> getOcean() {
 		return ocean;
 	}
@@ -53,6 +58,12 @@ public class Player implements NotifyCallback {
 			newEnemyFleetDetected(source);
 		}
 		handleAttackOnEnemy(source, target, hit);
+		if (shooted) {
+			if (victory()) {
+				System.out.println("We have gewonnen! " + mightyArmada.getIdEnd());
+			}
+			shooted = false;
+		}
 	}
 
 	public ChordImpl getNode() {
@@ -94,17 +105,17 @@ public class Player implements NotifyCallback {
 		}
 
 		// Debug
-		System.out.println();
-		System.out.println("vvvvvvvvvv initFleets vvvvvvvvvv");
-		System.out.println("Anzahl Fingertable: " + fingerTable.length);
-		System.out.println("Anzahl Flotten    : " + (ocean.size() + 1));
-		i = 0;
-		System.out.println("My Fleet: " + mightyArmada.getIdStart() + " -> " + mightyArmada.getIdEnd());
-		for (Fleet fleet : ocean) {
-			System.out.println("Fleet[" + ++i + "]: " + fleet.getIdStart() + " -> " + fleet.getIdEnd());
-		}
-		System.out.println("^^^^^^^^^^ initFleets ^^^^^^^^^^");
-		System.out.println();
+//		System.out.println();
+//		System.out.println("vvvvvvvvvv initFleets vvvvvvvvvv");
+//		System.out.println("Anzahl Fingertable: " + fingerTable.length);
+//		System.out.println("Anzahl Flotten    : " + (ocean.size() + 1));
+//		i = 0;
+//		System.out.println("My Fleet: " + mightyArmada.getIdStart() + " -> " + mightyArmada.getIdEnd());
+//		for (Fleet fleet : ocean) {
+//			System.out.println("Fleet[" + ++i + "]: " + fleet.getIdStart() + " -> " + fleet.getIdEnd());
+//		}
+//		System.out.println("^^^^^^^^^^ initFleets ^^^^^^^^^^");
+//		System.out.println();
 
 	}
 
@@ -217,7 +228,7 @@ public class Player implements NotifyCallback {
 		Fleet target = null;
 		ID field = null;
 		for (Fleet rabbitFleet : ocean) {
-			if (target == null || target.getNumberOfHits() < rabbitFleet.getNumberOfHits()) {
+			if (target == null || target.getNumberOfHits() > rabbitFleet.getNumberOfHits()) {
 				target = rabbitFleet;
 			}
 		}
@@ -229,12 +240,13 @@ public class Player implements NotifyCallback {
 				break;
 			}
 		}
-		System.out.println("vvvvvvvvvv fire vvvvvvvvvv");
-		System.out.println("Node                " + getNode().getID());
-		System.out.println("is shooting at Node " + target.getIdEnd());
-		System.out.println("to field            " + field + " [" + i + "]");
-		System.out.println("noh: " + target.getNumberOfHits());
-		System.out.println("^^^^^^^^^^ fire ^^^^^^^^^^");
+//		System.out.println("vvvvvvvvvv fire vvvvvvvvvv");
+//		System.out.println("Node                " + getNode().getID());
+//		System.out.println("is shooting at Node " + target.getIdEnd());
+//		System.out.println("to field            " + field + " [" + i + "]");
+//		System.out.println("noh: " + target.getNumberOfHits());
+//		System.out.println("^^^^^^^^^^ fire ^^^^^^^^^^");
+		shooted = true;
 		node.retrieve(field);
 	}
 
@@ -253,4 +265,5 @@ public class Player implements NotifyCallback {
 
 		return isEnd;
 	}
+
 }

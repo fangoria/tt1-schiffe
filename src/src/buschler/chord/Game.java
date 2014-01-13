@@ -10,19 +10,19 @@ import de.uniba.wiai.lspi.chord.service.PropertiesLoader;
 import de.uniba.wiai.lspi.chord.service.impl.ChordImpl;
 
 public class Game {
-	
+
 	private static Game game;
-	
+
 	private Game() {
 	}
-	
+
 	public static Game getInstance() {
 		if (game == null) {
 			game = new Game();
 		}
 		return game;
 	}
-	
+
 	public static void main(String[] args) {
 		boolean run = true;
 		Scanner input = new Scanner(System.in);
@@ -32,9 +32,9 @@ public class Game {
 		String port = "7081";
 		String bootstrapIp = "127.0.0.1";
 		String bootstrapPort = "8080";
-		
+
 		while (run) {
-						
+
 			if (input.hasNext("exit")) {
 				input.next();
 				run = !run;
@@ -42,16 +42,18 @@ public class Game {
 			} else if (input.hasNext("add")) {
 				input.next();
 				System.out.print("IP: ");
-				if (input.hasNext(Pattern.compile("([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-												  "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-												  "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-												  "([01]?\\d\\d?|2[0-4]\\d|25[0-5])"))) {
+				if (input.hasNext(Pattern
+						.compile("([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+								+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+								+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+								+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])"))) {
 					ip = input.next();
 					System.out.print("PORT: ");
 					if (input.hasNext(Pattern.compile("[1-9][0-9][0-9][0-9]"))) {
 						port = input.next();
 						Player tmpPlayer = new Player();
-						ChordImpl tmpNode = Chord.addChord(ip, port, bootstrapIp, bootstrapPort, tmpPlayer);
+						ChordImpl tmpNode = Chord.addChord(ip, port,
+								bootstrapIp, bootstrapPort, tmpPlayer);
 						tmpPlayer.setNode(tmpNode);
 						player.add(tmpPlayer);
 						System.out.println("Added Chord " + tmpNode.getID());
@@ -63,25 +65,29 @@ public class Game {
 					input.next();
 					System.out.println("No valid IP!");
 				}
-				
+
 			} else if (input.hasNext("init")) {
 				input.next();
 				Player tmpPlayer = new Player();
-				ChordImpl tmpNode = StartChord.init(bootstrapIp, bootstrapPort, tmpPlayer);	
+				ChordImpl tmpNode = StartChord.init(bootstrapIp, bootstrapPort,
+						tmpPlayer);
 				tmpPlayer.setNode(tmpNode);
 				player.add(tmpPlayer);
 			} else if (input.hasNext("bootstrap")) {
 				input.next();
 				System.out.print("IP: ");
-				if (input.hasNext(Pattern.compile("([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-												  "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-												  "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-												  "([01]?\\d\\d?|2[0-4]\\d|25[0-5])"))) {
+				if (input.hasNext(Pattern
+						.compile("([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+								+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+								+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+								+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])"))) {
 					bootstrapIp = input.next();
 					System.out.print("PORT: ");
 					if (input.hasNext(Pattern.compile("[1-9][0-9][0-9][0-9]"))) {
 						bootstrapPort = input.next();
-						System.out.println("Set bootstrap node for future nodes to " + bootstrapIp + ":" + bootstrapPort);
+						System.out
+								.println("Set bootstrap node for future nodes to "
+										+ bootstrapIp + ":" + bootstrapPort);
 					} else {
 						input.next();
 						System.out.println("No valid Port!");
@@ -90,77 +96,88 @@ public class Game {
 					input.next();
 					System.out.println("No valid IP!");
 				}
-				
+
 			} else if (input.hasNext("arrrgh!")) {
 				Node[] fingerTable;
 				StringBuffer buf;
 				input.next();
-				
+
 				Player[] players = player.toArray(new Player[player.size()]);
-				System.out.println("|---------------------------------------------------------------|");
-				System.out.println("|------------------------Fingertables---------------------------|");
-				System.out.println("|---------------------------------------------------------------|");
+				System.out
+						.println("|---------------------------------------------------------------|");
+				System.out
+						.println("|------------------------Fingertables---------------------------|");
+				System.out
+						.println("|---------------------------------------------------------------|");
 				for (Player p : players) {
-					fingerTable = p.getNode().getFingerTable().toArray(new Node[p.getNode().getFingerTable().size()]);
+					fingerTable = p
+							.getNode()
+							.getFingerTable()
+							.toArray(
+									new Node[p.getNode().getFingerTable()
+											.size()]);
 					buf = new StringBuffer("| " + p.getNode().getID() + ": ");
 					for (Node finger : fingerTable) {
 						buf.append("[" + finger.getNodeID() + "] ");
 					}
 					System.out.println(buf.toString());
-					System.out.println("|---------------------------------------------------------------|");
+					System.out
+							.println("|---------------------------------------------------------------|");
 				}
-				
+
 			} else if (input.hasNext("demo")) {
 				input.next();
 				Player tmpPlayer = new Player();
-				ChordImpl tmpNode = StartChord.init(bootstrapIp, bootstrapPort, tmpPlayer);	
+				ChordImpl tmpNode = StartChord.init(bootstrapIp, bootstrapPort,
+						tmpPlayer);
 				tmpPlayer.setNode(tmpNode);
 				player.add(tmpPlayer);
-				
-				for (int i = 0; i < 6; i++) {
+
+				for (int i = 0; i < 2; i++) {
 					String tmpPort = (2313 + i) + "";
 					System.out.print("|");
 					tmpPlayer = new Player();
-					tmpNode = Chord.addChord(ip, tmpPort, bootstrapIp, bootstrapPort, tmpPlayer);
+					tmpNode = Chord.addChord(ip, tmpPort, bootstrapIp,
+							bootstrapPort, tmpPlayer);
 					tmpPlayer.setNode(tmpNode);
 					player.add(tmpPlayer);
 				}
 				System.out.println("!");
+				
+				for (Player player2 : player) {
+					player2.initFleets();
+
+				}
+				
+				Thread t1 = new Thread(new Runna(player.get(0)));
+				t1.run();
+				
 			} else if (input.hasNext("start")) {
 				input.next();
-				if (!player.isEmpty()) {
-//					player.get(0).getNode().getID()
-//					byte[] id = new byte[20];
-//					id[0] = (byte) 255;
-//					ID chordID = new ID(id);
-//					ID chordID = ID.valueOf(player.get(0).getNode().getID().toBigInteger().add(new BigInteger("10000000000000000000000")));
-//					System.out.println(chordID);
-					for (Player player2 : player) {
-						player2.initFleets();
-						
-					}
-					
-//					player.get(1).initFleets();
-//					player.get(2).initFleets();
-//					player.get(3).initFleets();
-//					player.get(4).initFleets();
-					player.get(0).fire();
-//					for (int i = 0; i < 100; i++) {						
-//						player.get((i%2)).fire();
-//					}
+			
+			} else if (input.hasNext("u")) {
+				System.out.println("uuuuuuu");
+				input.next();
+				for (Player p : player) {
+					System.out.println("Fleet "
+							+ p.getMightyArmada().getIdEnd() + " has "
+							+ p.getMightyArmada().getNumberOfHits()
+							+ " hits and "
+							+ p.getMightyArmada().getNumberOfMisses()
+							+ " misses!");
 				}
 			} else {
 				input.next();
 			}
-			
+
 		}
 
 		input.close();
-		
+
 	}
-	
-//	private static void initFleet(List<Player> player) {
-//		
-//	}
+
+	// private static void initFleet(List<Player> player) {
+	//
+	// }
 
 }
