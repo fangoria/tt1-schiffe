@@ -446,6 +446,7 @@ public final class NodeImpl extends Node {
 		Node[] fingerTable = impl.getFingerTable().toArray(new Node[impl.getFingerTable().size()]);
 		fingerTable = FingerTableSort.sort(fingerTable, getNodeID());
 		distRangeID = getDistance(info.getRange());
+		impl.setTransactionID(info.getTransaction() + 1);
 		
 		for (int i = 0; i < fingerTable.length; i++) {
 			distFingerID = getDistance(fingerTable[i].getNodeID());

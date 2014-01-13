@@ -189,6 +189,8 @@ public final class ChordImpl implements Chord, Report, AsynChord {
 	private ID localID;
 
 	private NotifyCallback localCallback;
+	
+	private int transactionID = 1;
 
 	/* constructor */
 
@@ -1057,7 +1059,7 @@ public final class ChordImpl implements Chord, Report, AsynChord {
 	@Override
 	public void broadcast(ID target, Boolean hit) {
 		Broadcast info;
-		int transactionID = (int) (Math.random() * 13370815);
+//		int transactionID = (int) (Math.random() * 13370815);
 
 		Node[] fingerTable = this.getFingerTable().toArray(new Node[this.getFingerTable().size()]);
 		fingerTable = FingerTableSort.sort(fingerTable, getID());
@@ -1105,6 +1107,14 @@ public final class ChordImpl implements Chord, Report, AsynChord {
 		if (this.localNode != null) {
 			this.localNode.clearCallback();
 		}
+	}
+
+	public int getTransactionID() {
+		return transactionID;
+	}
+
+	public void setTransactionID(int transactionID) {
+		this.transactionID = transactionID;
 	}
 
 }

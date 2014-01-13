@@ -37,7 +37,7 @@ public class Player implements NotifyCallback {
 			}
 			fire();
 		} else {
-			System.err.println("Jemand hat gewonnen!");
+			System.err.println("Jemand hat gewonnen! Bei transactionID: " + node.getTransactionID());
 
 		}
 		
