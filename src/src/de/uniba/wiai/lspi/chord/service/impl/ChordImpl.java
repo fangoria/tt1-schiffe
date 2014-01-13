@@ -1074,8 +1074,8 @@ public final class ChordImpl implements Chord, Report, AsynChord {
 			try {
 				fingerTable[i].broadcast(info);
 			} catch (CommunicationException e) {
-//				System.err.println("Can't send to:" + fingerTable[i].getNodeID());
-//				System.err.println(e);
+				System.err.println("Can't send to:" + fingerTable[i].getNodeID());
+				System.err.println(e);
 			}
 		}
 

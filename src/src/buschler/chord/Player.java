@@ -36,7 +36,7 @@ public class Player implements NotifyCallback {
 //				// TODO Auto-generated catch block
 //				e.printStackTrace();
 //			}
-			fire();
+//			fire();
 		} else {
 			System.err.println("Jemand hat gewonnen! Bei transactionID: " + node.getTransactionID());
 
@@ -236,7 +236,6 @@ public class Player implements NotifyCallback {
 		int i;
 		for (i = 1; i <= target.getI(); i++) {
 			if (target.getFleetDeployment(i) == radar.UNKNOWN) {
-				target.setFleetDeployment(i, radar.MISS);
 				field = target.calculateIDFromField(i);
 				break;
 			}

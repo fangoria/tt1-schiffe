@@ -30,7 +30,7 @@ public class Game {
 		List<Player> player = new ArrayList<Player>();
 		String ip = "141.22.26.43";
 		String port = "7081";
-		String bootstrapIp = "141.22.26.43";
+		String bootstrapIp = "141.22.26.192";
 		String bootstrapPort = "8080";
 
 		while (run) {
@@ -42,13 +42,6 @@ public class Game {
 				
 			} else if (input.hasNext("add")) {
 				input.next();
-				System.out.print("IP: ");
-				if (input.hasNext(Pattern
-						.compile("([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-								+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-								+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-								+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])"))) {
-					ip = input.next();
 					System.out.print("PORT: ");
 					if (input.hasNext(Pattern.compile("[1-9][0-9][0-9][0-9]"))) {
 						port = input.next();
@@ -57,15 +50,12 @@ public class Game {
 								bootstrapIp, bootstrapPort, tmpPlayer);
 						tmpPlayer.setNode(tmpNode);
 						player.add(tmpPlayer);
+						tmpPlayer.initFleets();
 						System.out.println("Added Chord " + tmpNode.getID());
 					} else {
 						input.next();
 						System.out.println("No valid Port!");
 					}
-				} else {
-					input.next();
-					System.out.println("No valid IP!");
-				}
 
 			} else if (input.hasNext("init")) {
 				input.next();
@@ -102,7 +92,7 @@ public class Game {
 			} else if (input.hasNext("add2")) {
 				input.next();
 
-				for (int i = 0; i < 5; i++) {
+				for (int i = 0; i < 1; i++) {
 					String tmpPort = (2313 + i) + "";
 					System.out.print("|");
 					Player tmpPlayer = new Player();
@@ -160,12 +150,9 @@ public class Game {
 			} else if (input.hasNext("los")) {
 				input.next();
 				
-				for (Player player2 : player) {
-					player2.initFleets();
-
-				}
+				player.get(0).initFleets();
 				
-				player.get(1).fire();
+				player.get(0).fire();
 			} else {
 				input.next();
 			}
