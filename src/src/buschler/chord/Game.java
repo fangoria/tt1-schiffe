@@ -117,7 +117,7 @@ public class Game {
 				tmpPlayer.setNode(tmpNode);
 				player.add(tmpPlayer);
 				
-				for (int i = 0; i < 2; i++) {
+				for (int i = 0; i < 6; i++) {
 					String tmpPort = (2313 + i) + "";
 					System.out.print("|");
 					tmpPlayer = new Player();

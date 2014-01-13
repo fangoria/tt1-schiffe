@@ -15,21 +15,19 @@ public class Player implements NotifyCallback {
 	private List<Fleet> ocean;
 	private Fleet mightyArmada;
 	
-	public Player() {
-
-	}
-	
 	@Override
 	public void retrieved(ID target) {
 		System.out.println("vvvvvvvvvv retrieved vvvvvvvvvv");
 		System.out.println(getNode().getID());
 		System.out.println("Someone is shooting at me on field " + target + " [" + mightyArmada.calculateFieldFromID(target) + "]");
+		System.out.println("I have " + mightyArmada.getNumberOfHits() + " hits and " + mightyArmada.getNumberOfMisses() + " misses.");
 		for (Fleet fleet : ocean) {
 			System.out.println("Fleet " + fleet.getIdEnd() + " has " + fleet.getNumberOfHits() + " hits.");
 		}
-		System.out.println("^^^^^^^^^^ retrieved ^^^^^^^^^^");
-		node.broadcast(target, handleAttack(target));
-		if (!victory() && mightyArmada.calculateFieldFromID(target) > 0) {
+		System.out.println("^^^^^^^^^^ retrieved ^^^^^^^^^^");		
+		node.broadcast(target, handleAttack(target));		
+		
+		if (!victory()) {
 			try {
 				Thread.sleep(200);					
 				
@@ -40,20 +38,15 @@ public class Player implements NotifyCallback {
 			fire();
 		} else {
 			System.err.println("Jemand hat gewonnen!");
-			for (int i = 0; i < ocean.size(); i++) {
-				System.out.println("Fleet[" + i + "] has " + ocean.get(i).getNumberOfHits() + " hits and "
-						+ ocean.get(i).getNumberOfMisses() + " misses.");
-			}
-		}
 
-		if (target.getBytes()[0] == 0 && target.getBytes()[0] == 92) {
-			System.out.println("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
-		} else {
-			
 		}
 		
 	}
 
+	public List<Fleet> getOcean() {
+		return ocean;
+	}
+	
 	@Override
 	public void broadcast(ID source, ID target, Boolean hit) {
 		if (!checkParticipant(source)) {
@@ -128,27 +121,21 @@ public class Player implements NotifyCallback {
 				break;
 			}
 		}
-		System.out.println("Ein neuer? -> " + !result);
 		return result;
 	}
 
 	private void newEnemyFleetDetected(ID newRabbit) {
-//		ID start = ocean.get(ocean.size() - 1).getIdEnd();
-//		ID end = ocean.get(0).getIdEnd();;
-		
 		List<Fleet> tmpOcean = new ArrayList<Fleet>();
 		tmpOcean.addAll(ocean);
-		tmpOcean.add(mightyArmada);
+//		tmpOcean.add(mightyArmada);
 		
 		Fleet start = null;
 		Fleet end = null;
 		
-		System.out.println("vvvvvvvvvv newEnemyFleetDetected vvvvvvvvvv");
-		
-		System.out.println(newRabbit);
-		
-		System.out.println("<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>");
-		System.out.println(mightyArmada.getIdEnd());
+//		System.out.println("vvvvvvvvvv newEnemyFleetDetected vvvvvvvvvv");
+//		System.out.println(mightyArmada.getIdEnd());
+//		System.out.println(newRabbit);
+		System.out.print("OCEAN: " + ocean.size());
 		
 		for (int i = 0; i < tmpOcean.size(); i++) {
 			if (tmpOcean.get(i).getIdEnd().compareTo(newRabbit) == 1) {
@@ -182,20 +169,20 @@ public class Player implements NotifyCallback {
 		Fleet fleet = new Fleet(newRabbit, start.getIdEnd());
 		ocean.add(fleet);
 		end.setIdStart(newRabbit);
-		end.calculateFieldSize();
+		end.realignFields();
 		
 		
-		System.out.println(mightyArmada.getIdStart() + " -> " + mightyArmada.getIdEnd());
-		for (Fleet f : ocean) {
-			System.out.println(f.getIdStart() + " -> " + f.getIdEnd());
-		}
-		
-		if (start != null) System.out.println("Start: " + start.getIdEnd());
-		if (end != null) System.out.println("End: " + end.getIdEnd());
-		
+//		System.out.println(mightyArmada.getIdStart() + " -> " + mightyArmada.getIdEnd());
+//		for (Fleet f : ocean) {
+//			System.out.println(f.getIdStart() + " -> " + f.getIdEnd());
+//		}
+//		
+//		if (start != null) System.out.println("Start: " + start.getIdEnd());
+//		if (end != null) System.out.println("End: " + end.getIdEnd());
+//		
 	
-		System.out.println("^^^^^^^^^^ newEnemyFleetDetected ^^^^^^^^^^");
-		
+		System.out.println(" -> OCEAN: " + ocean.size());
+//		System.out.println("^^^^^^^^^^ newEnemyFleetDetected ^^^^^^^^^^");
 		
 		
 	}
@@ -208,6 +195,7 @@ public class Player implements NotifyCallback {
 		for (int i = 0; i < ocean.size(); i++) {
 			if (ocean.get(i).getIdEnd().compareTo(source) == 0) {
 				int field = ocean.get(i).calculateFieldFromID(target);
+				ocean.get(i).registerShot(new Shot(target, hit));
 				if (hit) {
 					if (ocean.get(i).getFleetDeployment(field) != radar.HIT) {
 						ocean.get(i).incrementNumberOfHits();
@@ -229,7 +217,7 @@ public class Player implements NotifyCallback {
 		Fleet target = null;
 		ID field = null;
 		for (Fleet rabbitFleet : ocean) {
-			if (target == null || target.getNumberOfHits() > rabbitFleet.getNumberOfHits()) {
+			if (target == null || target.getNumberOfHits() < rabbitFleet.getNumberOfHits()) {
 				target = rabbitFleet;
 			}
 		}
@@ -254,9 +242,13 @@ public class Player implements NotifyCallback {
 		boolean isEnd = false;
 
 		for (Fleet fleet : ocean) {
-			if (fleet.getNumberOfHits() == 10) {
+			if (fleet.getNumberOfHits() == 3) {
 				isEnd = true;
 			}
+		}
+		
+		if (!isEnd && mightyArmada.getNumberOfHits() == 3) {
+			isEnd = true;
 		}
 
 		return isEnd;

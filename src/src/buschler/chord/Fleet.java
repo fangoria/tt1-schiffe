@@ -26,7 +26,7 @@ public class Fleet {
 
 	public Fleet(ID idEnd, ID idStart, int I, int S) {
 		byte[] max = new byte[20];
-		Arrays.fill(max, (byte) Byte.MAX_VALUE);
+		Arrays.fill(max, (byte) 255);
 		idMax = new ID(max);
 
 		this.I = I;
@@ -101,21 +101,41 @@ public class Fleet {
 
 	public void registerShot(Shot shot) {
 		shots.add(shot);
-		totalShots++;
-		if (shot.isHit()) {
-			numberOfHits++;
-		} else {
-			numberOfMisses++;
+	}
+	
+	public void realignFields() {
+		calculateFieldSize();
+		fleetDeployment = new radar[this.I];
+		Arrays.fill(fleetDeployment, radar.UNKNOWN);
+		
+		for (Shot shot : shots) {
+			int field = calculateFieldFromID(shot.getTarget()) - 1;
+			if (shot.isHit()) {
+				if (fleetDeployment[field] != radar.HIT) {
+					incrementNumberOfHits();
+					setFleetDeployment(field, radar.HIT);
+				}
+			} else {
+				if (fleetDeployment[field] != radar.HIT) {
+					if (fleetDeployment[field] != radar.MISS) {
+						incrementNumberOfMisses();
+						setFleetDeployment(field, radar.MISS);
+					}
+				}
+			}
+			
 		}
+		
 	}
 
 	public boolean handleAttackOnMightyAmarda(ID target) {
 		int field = calculateFieldFromID(target) - 1;
-		// int field = 20;
 		if (fleetDeployment[field] == radar.HIT) {
 			fleetDeployment[field] = radar.UNKNOWN;
+			numberOfHits++;
 			return true;
 		} else {
+			numberOfMisses++;
 			return false;
 		}
 	}
@@ -126,7 +146,8 @@ public class Fleet {
 		BigInteger halfSize;
 		if (field == this.I) {
 			tmp = tmp.multiply(new BigInteger("" + (this.I - 1)));
-			halfSize = calculateDistance().toBigInteger().subtract(tmp).divide(new BigInteger("2"));
+			halfSize = calculateDistance().toBigInteger().subtract(tmp)
+					.divide(new BigInteger("2"));
 			// halfSize = new BigInteger(tmp.toByteArray()).divide(new
 			// BigInteger("2"));
 			tmp = tmp.add(halfSize);
@@ -139,14 +160,14 @@ public class Fleet {
 
 		fieldID = new ID((tmp.add(idStart.toBigInteger())).toByteArray());
 		fieldID = normalizeID(fieldID);
-//		if (idMax.compareTo(fieldID) == 1) {
-//			tmp = tmp.subtract(idMax.toBigInteger());
-//			fieldID = new ID(tmp.toByteArray());
-//		}
-//		System.out.println("vvvvvvvvvv calculateIDFromField vvvvvvvvvv");
-//		System.out.println("The fieldsize is      " + fieldSize);
-//		System.out.println("The ID for field " + field + " is " + fieldID);
-//		System.out.println("^^^^^^^^^^ calculateFieldFromID ^^^^^^^^^^");
+		// if (idMax.compareTo(fieldID) == 1) {
+		// tmp = tmp.subtract(idMax.toBigInteger());
+		// fieldID = new ID(tmp.toByteArray());
+		// }
+		// System.out.println("vvvvvvvvvv calculateIDFromField vvvvvvvvvv");
+		// System.out.println("The fieldsize is      " + fieldSize);
+		// System.out.println("The ID for field " + field + " is " + fieldID);
+		// System.out.println("^^^^^^^^^^ calculateFieldFromID ^^^^^^^^^^");
 
 		return fieldID;
 	}
@@ -155,40 +176,44 @@ public class Fleet {
 		ID tmp = id;
 		int result;
 		if (idStart.compareTo(id) == 1) {// wrap around
-			tmp = new ID((tmp.toBigInteger().add(idMax.toBigInteger()).subtract(idStart.toBigInteger())).toByteArray());
+			tmp = new ID(
+					(tmp.toBigInteger().add(idMax.toBigInteger())
+							.subtract(idStart.toBigInteger())).toByteArray());
 		} else {
-			tmp = new ID((tmp.toBigInteger().subtract(idStart.toBigInteger())).toByteArray());
+			tmp = new ID(
+					(tmp.toBigInteger().subtract(idStart.toBigInteger()))
+							.toByteArray());
 		}
 
-		System.out.println(tmp);
 		tmp = normalizeID(tmp);
-		System.out.println(tmp);
-		
-		tmp = new ID((tmp.toBigInteger().divide(fieldSize.toBigInteger())).toByteArray());
-		
-		System.out.println(tmp);
+
+		tmp = new ID(
+				(tmp.toBigInteger().divide(fieldSize.toBigInteger()))
+						.toByteArray());
+
 		tmp = normalizeID(tmp);
-		System.out.println(tmp);
-		
+
 		result = Integer.valueOf(tmp.toBigInteger().toString());
 		if (result >= this.I) {
 			result = this.I - 1;
 		}
 
-		System.out.println("vvvvvvvvvv calculateFieldFromID vvvvvvvvvv");
-		System.out.println("The fieldsize is " + fieldSize);
-		System.out.println("The field for ID " + id + " is " + (result + 1));
-		System.out.println("^^^^^^^^^^ calculateFieldFromID ^^^^^^^^^^");
+//		System.out.println("vvvvvvvvvv calculateFieldFromID vvvvvvvvvv");
+//		System.out.println("The fieldsize is " + fieldSize);
+//		System.out.println("The field for ID " + id + " is " + (result + 1));
+//		System.out.println("^^^^^^^^^^ calculateFieldFromID ^^^^^^^^^^");
 
 		return result + 1;
 	}
 
 	public void calculateFieldSize() {
-		fieldSize = new ID((calculateDistance().toBigInteger().divide(new BigInteger("" + this.I))).toByteArray());
+		fieldSize = new ID(
+				(calculateDistance().toBigInteger().divide(new BigInteger(""
+						+ this.I))).toByteArray());
 		fieldSize = normalizeID(fieldSize);
-//		System.out.println("vvvvvvvvvv calculateFieldSize vvvvvvvvvv");
-//		System.out.println("The fieldsize for this ocean is " + fieldSize);
-//		System.out.println("^^^^^^^^^^ calculateFieldSize ^^^^^^^^^^");
+		// System.out.println("vvvvvvvvvv calculateFieldSize vvvvvvvvvv");
+		// System.out.println("The fieldsize for this ocean is " + fieldSize);
+		// System.out.println("^^^^^^^^^^ calculateFieldSize ^^^^^^^^^^");
 	}
 
 	private ID calculateDistance() {
@@ -200,10 +225,13 @@ public class Fleet {
 		// if (tmpEndId.compareTo(tmpStartId) == 1) { // ende gr��er
 		if (idEnd.compareTo(idStart) == 1) {
 			// if (idEnd.compareTo(idStart) == 1) { // ende gr��er
-			dist = new ID((idEnd.toBigInteger().subtract(idStart.toBigInteger())).toByteArray());
+			dist = new ID(
+					(idEnd.toBigInteger().subtract(idStart.toBigInteger()))
+							.toByteArray());
 		} else { // start gr��er; wrap around
 			dist = new ID(
-					(idMax.toBigInteger().subtract(idStart.toBigInteger()).add(idEnd.toBigInteger())).toByteArray());
+					(idMax.toBigInteger().subtract(idStart.toBigInteger())
+							.add(idEnd.toBigInteger())).toByteArray());
 
 			// dist = new BigInteger(idMax.toString());
 			// dist = dist.add(tmpEnd);
@@ -211,41 +239,42 @@ public class Fleet {
 
 		dist = normalizeID(dist);
 
-//		System.out.println("vvvvvvvvvv calculateDistance vvvvvvvvvv");
-//		System.out.println("The distance is " + dist);
-//		System.out.println("^^^^^^^^^^ calculateDistance ^^^^^^^^^^");
+		// System.out.println("vvvvvvvvvv calculateDistance vvvvvvvvvv");
+		// System.out.println("The distance is " + dist);
+		// System.out.println("^^^^^^^^^^ calculateDistance ^^^^^^^^^^");
 
 		return dist;
 	}
 
-//	private void calculateFleetDeployment() {
-//
-//	}
+	// private void calculateFleetDeployment() {
+	//
+	// }
 
 	private ID normalizeID(ID id) {
 		byte[] tmp = new byte[20];
 
 		if (id.getLength() < 160) {
-			System.arraycopy(id.getBytes(), 0, tmp, (20 - id.getBytes().length), id.getBytes().length);
+			System.arraycopy(id.getBytes(), 0, tmp,
+					(20 - id.getBytes().length), id.getBytes().length);
 		} else if (id.getLength() > 160) {
 			System.arraycopy(id.getBytes(), 1, tmp, 0, tmp.length);
 		} else {
-			tmp = id.getBytes(); 
+			tmp = id.getBytes();
 		}
 
 		return new ID(tmp);
 	}
 
-//	private BigInteger addLeadingZero(BigInteger id) {
-//		byte[] tmp = new byte[21];
-//
-//		if (id.toByteArray().length < 21) {
-//			System.arraycopy(id.toByteArray(), 0, tmp, 1, id.toByteArray().length);
-//		} else {
-//			tmp = id.toByteArray();
-//		}
-//
-//		return new BigInteger(tmp);
-//	}
+	// private BigInteger addLeadingZero(BigInteger id) {
+	// byte[] tmp = new byte[21];
+	//
+	// if (id.toByteArray().length < 21) {
+	// System.arraycopy(id.toByteArray(), 0, tmp, 1, id.toByteArray().length);
+	// } else {
+	// tmp = id.toByteArray();
+	// }
+	//
+	// return new BigInteger(tmp);
+	// }
 
 }
