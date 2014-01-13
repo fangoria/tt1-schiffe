@@ -10,6 +10,7 @@ public class Shot {
 	public Shot(ID target, boolean hit) {		
 		this.setTarget(target);
 		this.setHit(hit);
+		//TEST
 	}
 
 	public boolean isHit() {
