@@ -8,9 +8,9 @@ import java.util.List;
 import de.uniba.wiai.lspi.chord.data.ID;
 
 public class Fleet {
+	protected ID fieldSize;
 	private ID idEnd;
 	private ID idStart;
-	private ID fieldSize;
 	private ID idMax;
 	private List<Shot> shots;
 	private int numberOfHits;
@@ -20,10 +20,17 @@ public class Fleet {
 	private int I; // Anzahl Felder
 	private int S; // Anzahl Schiffe
 
-	enum radar {
+	public enum radar {
 		HIT, MISS, UNKNOWN;
 	}
 
+	/**
+	 * 
+	 * @param idEnd ID des eigenen Node
+	 * @param idStart ID des Predecessors
+	 * @param I Spielfelder
+	 * @param S Schiffe
+	 */
 	public Fleet(ID idEnd, ID idStart, int I, int S) {
 		byte[] max = new byte[20];
 		Arrays.fill(max, (byte) 255);
@@ -39,70 +46,137 @@ public class Fleet {
 		calculateFieldSize();
 	}
 
+	/**
+	 * 
+	 * @param idEnd ID des eigenen Node
+	 * @param idStart ID des Predecessors
+	 */
 	public Fleet(ID idEnd, ID idStart) {
 		this(idEnd, idStart, 100, 10);
 	}
 
+	/**
+	 * 
+	 * @return ID des eigenen Node
+	 */
 	public ID getIdEnd() {
 		return idEnd;
 	}
 
+	/**
+	 * 
+	 * @return ID des Predecessors
+	 */
 	public ID getIdStart() {
 		return idStart;
 	}
 
+	/**
+	 * 
+	 * @param idStart ID des Predecessors
+	 */
 	public void setIdStart(ID idStart) {
 		this.idStart = idStart;
 	}
 
+	/**
+	 * 
+	 * @return Anzahl an Treffern die diese Flotte erlitten hat
+	 */
 	public int getNumberOfHits() {
 		return numberOfHits;
 	}
 
+	/**
+	 * 
+	 * @return Anzahl an Fehlversuchen auf diese Flotte
+	 */
 	public int getNumberOfMisses() {
 		return numberOfMisses;
 	}
 
+	/**
+	 * 
+	 * @return Anzahl Versuche auf diese Flotte 
+	 */
 	public int getTotalShots() {
 		return totalShots;
 	}
 
-	public radar getFleetDeployment(int id) {
-		return fleetDeployment[id - 1];
+	/**
+	 * @param field Spielfeldposition
+	 * @return Zustand des Feldes (HIT, MISS, UNKNOWN)
+	 */
+	public radar getFleetDeployment(int field) {
+		return fleetDeployment[field - 1];
 	}
 
-	public void setFleetDeployment(int id, radar state) {
-		this.fleetDeployment[id - 1] = state;
+	/**
+	 * 
+	 * @param field Spielfeldposition
+	 * @param state Zustand des Feldes (HIT, MISS, UNKNOWN)
+	 */
+	public void setFleetDeployment(int field, radar state) {
+		this.fleetDeployment[field - 1] = state;
 	}
 
+	/**
+	 * 
+	 * @return Anzahl Schiffe dieser Flotte 
+	 */
 	public int getS() {
 		return S;
 	}
 
+	/**
+	 * 
+	 * @param s Anzahl Schiffe
+	 */
 	public void setS(int s) {
 		S = s;
 	}
 
+	/**
+	 * 
+	 * @return Spielfeldgröße
+	 */
 	public int getI() {
 		return I;
 	}
 
+	/**
+	 * 
+	 * @param i Spielfeldgröße
+	 */
 	public void setI(int i) {
 		I = i;
 	}
 
+	/**
+	 * 
+	 */
 	public void incrementNumberOfHits() {
 		this.numberOfHits++;
 	}
 
+	/**
+	 * 
+	 */
 	public void incrementNumberOfMisses() {
 		this.numberOfMisses++;
 	}
 
+	/**
+	 * 
+	 * @param shot Schuss auf die Flotte 
+	 */
 	public void registerShot(Shot shot) {
 		shots.add(shot);
 	}
-	
+
+	/**
+	 * 
+	 */
 	public void realignFields() {
 		calculateFieldSize();
 		fleetDeployment = new radar[this.I];
@@ -126,6 +200,11 @@ public class Fleet {
 		}
 	}
 
+	/**
+	 * 
+	 * @param target ID des Feldes auf das geschossen wurde
+	 * @return HIT (<b>true</b>) oder MISS (<b>false</b>)
+	 */
 	public boolean handleAttackOnMightyAmarda(ID target) {
 		int field = calculateFieldFromID(target) - 1;
 		if (fleetDeployment[field] == radar.HIT) {
@@ -138,6 +217,11 @@ public class Fleet {
 		}
 	}
 
+	/**
+	 * 
+	 * @param field Spielfeldposition
+	 * @return ID der Spielfeldposition
+	 */
 	public ID calculateIDFromField(Integer field) {
 		ID fieldID;
 		BigInteger tmp = fieldSize.toBigInteger();
@@ -146,8 +230,6 @@ public class Fleet {
 			tmp = tmp.multiply(new BigInteger("" + (this.I - 1)));
 			halfSize = calculateDistance().toBigInteger().subtract(tmp)
 					.divide(new BigInteger("2"));
-			// halfSize = new BigInteger(tmp.toByteArray()).divide(new
-			// BigInteger("2"));
 			tmp = tmp.add(halfSize);
 		} else {
 			tmp = tmp.multiply(new BigInteger(field.toString()));
@@ -158,18 +240,15 @@ public class Fleet {
 
 		fieldID = new ID((tmp.add(idStart.toBigInteger())).toByteArray());
 		fieldID = normalizeID(fieldID);
-		// if (idMax.compareTo(fieldID) == 1) {
-		// tmp = tmp.subtract(idMax.toBigInteger());
-		// fieldID = new ID(tmp.toByteArray());
-		// }
-		// System.out.println("vvvvvvvvvv calculateIDFromField vvvvvvvvvv");
-		// System.out.println("The fieldsize is      " + fieldSize);
-		// System.out.println("The ID for field " + field + " is " + fieldID);
-		// System.out.println("^^^^^^^^^^ calculateFieldFromID ^^^^^^^^^^");
 
 		return fieldID;
 	}
 
+	/**
+	 * 
+	 * @param id ID der Spielfeldposition
+	 * @return Spielfeldposition
+	 */
 	public int calculateFieldFromID(ID id) {
 		ID tmp = id;
 		int result;
@@ -196,58 +275,45 @@ public class Fleet {
 			result = this.I - 1;
 		}
 
-//		System.out.println("vvvvvvvvvv calculateFieldFromID vvvvvvvvvv");
-//		System.out.println("The fieldsize is " + fieldSize);
-//		System.out.println("The field for ID " + id + " is " + (result + 1));
-//		System.out.println("^^^^^^^^^^ calculateFieldFromID ^^^^^^^^^^");
-
 		return result + 1;
 	}
 
+	/**
+	 * 
+	 */
 	public void calculateFieldSize() {
 		fieldSize = new ID(
 				(calculateDistance().toBigInteger().divide(new BigInteger(""
 						+ this.I))).toByteArray());
 		fieldSize = normalizeID(fieldSize);
-		// System.out.println("vvvvvvvvvv calculateFieldSize vvvvvvvvvv");
-		// System.out.println("The fieldsize for this ocean is " + fieldSize);
-		// System.out.println("^^^^^^^^^^ calculateFieldSize ^^^^^^^^^^");
 	}
 
-	private ID calculateDistance() {
+	/**
+	 * 
+	 * @return Distanz als ID
+	 */
+	protected ID calculateDistance() {
 		ID dist;
-		// BigInteger tmpEnd = addLeadingZero(idEnd);
-		// BigInteger tmpStart = addLeadingZero(idStart);
-		// ID tmpStartId = new ID(idStart.toByteArray());
-		// ID tmpEndId = new ID(idEnd.toByteArray());
-		// if (tmpEndId.compareTo(tmpStartId) == 1) { // ende gr��er
 		if (idEnd.compareTo(idStart) == 1) {
-			// if (idEnd.compareTo(idStart) == 1) { // ende gr��er
 			dist = new ID(
 					(idEnd.toBigInteger().subtract(idStart.toBigInteger()))
 							.toByteArray());
-		} else { // start gr��er; wrap around
+		} else {
 			dist = new ID(
 					(idMax.toBigInteger().subtract(idStart.toBigInteger())
 							.add(idEnd.toBigInteger())).toByteArray());
 
-			// dist = new BigInteger(idMax.toString());
-			// dist = dist.add(tmpEnd);
 		}
 
 		dist = normalizeID(dist);
-
-		// System.out.println("vvvvvvvvvv calculateDistance vvvvvvvvvv");
-		// System.out.println("The distance is " + dist);
-		// System.out.println("^^^^^^^^^^ calculateDistance ^^^^^^^^^^");
-
 		return dist;
 	}
 
-	// private void calculateFleetDeployment() {
-	//
-	// }
-
+	/**
+	 * 
+	 * @param id ID
+	 * @return Normalisierte ID (20 byte)
+	 */
 	private ID normalizeID(ID id) {
 		byte[] tmp = new byte[20];
 
@@ -262,17 +328,5 @@ public class Fleet {
 
 		return new ID(tmp);
 	}
-
-	// private BigInteger addLeadingZero(BigInteger id) {
-	// byte[] tmp = new byte[21];
-	//
-	// if (id.toByteArray().length < 21) {
-	// System.arraycopy(id.toByteArray(), 0, tmp, 1, id.toByteArray().length);
-	// } else {
-	// tmp = id.toByteArray();
-	// }
-	//
-	// return new BigInteger(tmp);
-	// }
 
 }

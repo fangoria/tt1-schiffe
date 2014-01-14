@@ -8,9 +8,12 @@ import de.uniba.wiai.lspi.chord.service.ServiceException;
 import de.uniba.wiai.lspi.chord.service.impl.ChordImpl;
 
 public class Chord {
-	
-	public static ChordImpl addChord(String ip, String port, String bootIp, String bootPort, NotifyCallback cb) {
-		ChordImpl chord = new ChordImpl(); 
+
+	private static ChordImpl firstNode;
+
+	public static ChordImpl addChord(String ip, String port, String bootIp,
+			String bootPort, NotifyCallback cb) {
+		ChordImpl chord = new ChordImpl();
 		String protocol = URL.KNOWN_PROTOCOLS.get(URL.SOCKET_PROTOCOL);
 		URL localURL = null;
 		try {
@@ -20,7 +23,8 @@ public class Chord {
 		}
 		URL bootstrapURL = null;
 		try {
-			bootstrapURL = new URL(protocol + "://" + bootIp + ":" + bootPort + "/");
+			bootstrapURL = new URL(protocol + "://" + bootIp + ":" + bootPort
+					+ "/");
 		} catch (MalformedURLException e) {
 			throw new RuntimeException(e);
 		}
@@ -31,9 +35,34 @@ public class Chord {
 		} catch (ServiceException e) {
 			throw new RuntimeException(" Could not join DHT ! ", e);
 		}
-		
+
 		return chord;
-		
+
 	}
-	
+
+	public static ChordImpl init(String ip, String port, NotifyCallback cb) {
+
+		if (firstNode == null) {
+
+			// PropertiesLoader.loadPropertyFile();
+			String protocol = URL.KNOWN_PROTOCOLS.get(URL.SOCKET_PROTOCOL);
+			URL localURL = null;
+			try {
+				localURL = new URL(protocol + "://" + ip + ":" + port + "/");
+			} catch (MalformedURLException e) {
+				throw new RuntimeException(e);
+			}
+			firstNode = new ChordImpl();
+			try {
+				firstNode.setCallback(cb);
+				firstNode.create(localURL);
+			} catch (ServiceException e) {
+				throw new RuntimeException(" Could not create DHT ! ", e);
+			}
+		}
+
+		return firstNode;
+
+	}
+
 }
