@@ -11,31 +11,15 @@ import de.uniba.wiai.lspi.chord.service.impl.ChordImpl;
 
 public class Player implements NotifyCallback {
 
-	private ChordImpl node;
-	private List<Fleet> ocean;
-	private Fleet mightyArmada;
-	private boolean shooted = false;
+	protected List<Fleet> ocean;
+	protected Fleet mightyArmada;
+	protected ChordImpl node;
+	protected boolean shooted = false;
 	
 	@Override
 	public void retrieved(ID target) {
-		System.out.println("vvvvvvvvvv retrieved vvvvvvvvvv");
-		System.out.println(getNode().getID());
-		System.out.println("Someone is shooting at me on field " + target + " [" + mightyArmada.calculateFieldFromID(target) + "]");
-//		System.out.println("I have " + mightyArmada.getNumberOfHits() + " hits and " + mightyArmada.getNumberOfMisses() + " misses.");
-		for (Fleet fleet : ocean) {
-			System.out.println("Fleet " + fleet.getIdEnd() + " has " + fleet.getNumberOfHits() + " hits.");
-		}
 		node.broadcast(target, handleAttack(target));		
-		System.out.println("^^^^^^^^^^ retrieved ^^^^^^^^^^");		
-		
 		if (!victory()) {
-//			try {
-//				Thread.sleep(200);					
-//				
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
 			fire();
 		} else {
 			System.err.println("Jemand hat gewonnen! Bei transactionID: " + node.getTransactionID());
@@ -255,7 +239,7 @@ public class Player implements NotifyCallback {
 		node.retrieve(field);
 	}
 
-	private boolean victory() {
+	protected boolean victory() {
 		boolean isEnd = false;
 
 		for (Fleet fleet : ocean) {

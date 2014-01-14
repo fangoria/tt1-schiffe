@@ -30,7 +30,7 @@ public class Game {
 		List<Player> player = new ArrayList<Player>();
 		String ip = "141.22.26.43";
 		String port = "7081";
-		String bootstrapIp = "141.22.26.192";
+		String bootstrapIp = "141.22.26.43";
 		String bootstrapPort = "8080";
 
 		while (run) {
